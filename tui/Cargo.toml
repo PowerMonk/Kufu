@@ -1,0 +1,14 @@
+[package]
+name = "kufu-tui"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+# ratatui: The TUI library (modern fork of tui-rs)
+# "crossterm" feature means we use crossterm as the terminal backend
+# (crossterm works cross-platform: Windows, macOS, Linux)
+ratatui = { version = "0.29", features = ["crossterm"] }
+
+# crossterm: Low-level terminal manipulation
+# We need this explicitly for event handling (keyboard input)
+crossterm = "0.28"
