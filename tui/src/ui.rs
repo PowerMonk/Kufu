@@ -92,9 +92,9 @@ pub fn draw(f: &mut Frame, state: &AppState) {
     let input_row = Layout::default()
         .direction(Direction::Horizontal)
         .constraints([
-            Constraint::Ratio(1, 6),  // Left margin: 1/6 of screen
-            Constraint::Ratio(4, 6),  // Input box: 4/6 of screen (the middle 2/3)
-            Constraint::Ratio(1, 6),  // Right margin: 1/6 of screen
+            Constraint::Ratio(1, 8),  // Left margin: 1/8 of screen
+            Constraint::Ratio(6, 8),  // Input box: 6/8 of screen (the middle 3/4)
+            Constraint::Ratio(1, 8),  // Right margin: 1/8 of screen
         ])
         // input box is the chunk number 2 (0-based index)
         .split(middle_chunks[2]);
