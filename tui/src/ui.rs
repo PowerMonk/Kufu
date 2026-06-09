@@ -1,123 +1,38 @@
-// ui.rs - User Interface Rendering
+// ui.rs - User interface orchestration.
 //
-// This module handles all the visual rendering of the TUI.
-// In ratatui, rendering happens in a "draw" function that receives
-// a Frame. A Frame represents one screen of the terminal.
+// RESPONSIBILITY: Decide WHERE things go on the screen, then call small
+// widget functions to draw them. Each widget is its own function in
+// `ui::widgets`. This file should stay short.
 
-use ratatui::{
-    Frame,
-    layout::{Constraint, Direction, Layout, Alignment},
-    widgets::{Block, Borders, Paragraph},
-    style::{Modifier, Style},
-    text::{Line, Span},
-};
+pub mod widgets;
 
-use crate::theme;
+use ratatui::Frame;
+
 use crate::AppState;
+use crate::ui::widgets::{FrameLayout, TextInputView};
 
-/// ASCII art for "Kufu" - each string is one line of the art.
-/// We use this to make the title "bigger" since terminals can't change font size.
-/// This is a common technique in TUI and CLI apps.
-/// &str means it's a string slice, a string slice is better for static text that doesn't need to be modified because it's more efficient than a String (which is heap-allocated and mutable).
-const KUFU_ART: &str = r#"
- ██╗  ██╗██╗   ██╗███████╗██╗   ██╗
- ██║ ██╔╝██║   ██║██╔════╝██║   ██║
- █████╔╝ ██║   ██║█████╗  ██║   ██║
- ██╔═██╗ ██║   ██║██╔══╝  ██║   ██║
- ██║  ██╗╚██████╔╝██║     ╚██████╔╝
- ╚═╝  ╚═╝ ╚═════╝ ╚═╝      ╚═════╝
-"#;
+/// Draws a single frame.
+///
+/// `view` holds view-only state (currently just the textbox scroll offset)
+/// that must SURVIVE across frames. We pass it by mutable reference so
+/// the textbox can update the scroll position as the user types.
+///
+/// C# COMPARISON: like a `private ScrollViewer _scroll` field on a
+/// UserControl that lives for the whole session.
+pub fn draw(f: &mut Frame, state: &AppState, view: &mut TextInputView) {
+    // 1. Compute the layout ONCE for this frame.
+    //    Every widget reads from `layout`, none of them recompute.
+    let layout = FrameLayout::compute(f.area());
 
-pub fn draw(f: &mut Frame, state: &AppState) {
-    let area = f.area();
+    // 2. Paint the background first so every other widget sits on it.
+    widgets::draw_background(f, layout.screen);
 
-    // --- Paint the entire background first ---
-    // This is the key fix: we render a Block covering the FULL screen area
-    // with our background color BEFORE rendering anything else.
-    // Widgets only color their own area, so without this, empty space stays black.
-    let background = Block::default()
-        .style(Style::default().bg(theme::BG));
-    f.render_widget(background, area);
+    // 3. Draw the four widgets in the middle band.
+    //    The textbox needs `&mut view` because it updates the scroll offset.
+    widgets::draw_title(f, layout.middle_rows[0]);
+    widgets::draw_input(f, state, &layout, view);
+    widgets::draw_model(f, state, &layout);
 
-    // Split the screen vertically into 3 sections to center content.
-    // The middle section holds our title + input box.
-    let vertical_chunks = Layout::default()
-        .direction(Direction::Vertical)
-        .constraints([
-            Constraint::Min(1),      // Top spacer
-            Constraint::Length(12),  // Middle: title (7 lines) + gap + input (3 lines)
-            Constraint::Min(1),      // Bottom spacer
-        ])
-        .split(area);
-
-    // Split the middle section: title on top, input below
-    let middle_chunks = Layout::default()
-        .direction(Direction::Vertical)
-        .constraints([
-            Constraint::Length(7),   // ASCII art is 7 lines tall (including blank line)
-            Constraint::Length(1),   // Small gap between title and input
-            Constraint::Length(3),   // Input box (top border + content + bottom border)
-        ])
-        // [1] means we take the split where content goes
-        .split(vertical_chunks[1]);
-
-    // --- Draw the ASCII art title ---
-    // KUFU_ART is a &str (string slice). We split it into lines with .lines().
-    // Each line becomes a Line with our accent color.
-    let title_lines: Vec<Line> = KUFU_ART
-        .lines()
-        .skip(1)  // Skip the first empty line from the raw string literal
-        .map(|line| {
-            // `map` transforms each element. Here we convert each &str into a styled Line.
-            // `Span::styled` applies our accent color to the whole line.
-            Line::from(Span::styled(
-                line,
-                Style::default()
-                    .fg(theme::ACCENT)
-                    .add_modifier(Modifier::BOLD),
-            ))
-        })
-        .collect();  // `collect()` gathers the iterator into a Vec
-
-    let title = Paragraph::new(title_lines)
-        .alignment(Alignment::Center)
-        .style(Style::default().bg(theme::BG));
-
-    f.render_widget(title, middle_chunks[0]);
-
-    // --- Draw the input box with side margins ---
-    // Split the input row horizontally: left spacer / input / right spacer
-    // Constraint::Ratio(n, d) takes n/d of the available space.
-    // So Ratio(1, 6) = 1/6 of the width for each spacer.
-    let input_row = Layout::default()
-        .direction(Direction::Horizontal)
-        .constraints([
-            Constraint::Ratio(1, 8),  // Left margin: 1/8 of screen
-            Constraint::Ratio(6, 8),  // Input box: 6/8 of screen (the middle 3/4)
-            Constraint::Ratio(1, 8),  // Right margin: 1/8 of screen
-        ])
-        // input box is the chunk number 2 (0-based index)
-        .split(middle_chunks[2]);
-
-    let input_block = Block::default()
-        .title(" Input ")
-        .title_style(Style::default().fg(theme::TEXT_DIM))
-        .borders(Borders::ALL)
-        .border_style(Style::default().fg(theme::BORDER))
-        .style(Style::default().bg(theme::BG));
-
-    let input_content = if state.input.is_empty() {
-        Span::styled(
-            "Kufu I need you to...",
-            Style::default().fg(theme::PLACEHOLDER),
-        )
-    } else {
-        Span::styled(&state.input, Style::default().fg(theme::TEXT))
-    };
-
-    let input_paragraph = Paragraph::new(Line::from(input_content))
-        .block(input_block);
-
-    // Render into input_row[1] (the middle section)
-    f.render_widget(input_paragraph, input_row[1]);
+    // 4. Version label lives in the bottom-right of the WHOLE screen.
+    widgets::draw_version(f, &layout);
 }
