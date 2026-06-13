@@ -9,7 +9,8 @@ pub mod widgets;
 use ratatui::Frame;
 
 use crate::AppState;
-use crate::ui::widgets::{FrameLayout, TextInputView};
+use crate::text_input_view::TextInputView;
+use crate::ui::widgets::FrameLayout;
 
 /// Draws a single frame.
 ///
@@ -21,14 +22,12 @@ use crate::ui::widgets::{FrameLayout, TextInputView};
 /// UserControl that lives for the whole session.
 pub fn draw(f: &mut Frame, state: &AppState, view: &mut TextInputView) {
     // 1. Compute the layout ONCE for this frame.
-    //    Every widget reads from `layout`, none of them recompute.
     let layout = FrameLayout::compute(f.area());
 
     // 2. Paint the background first so every other widget sits on it.
     widgets::draw_background(f, layout.screen);
 
     // 3. Draw the four widgets in the middle band.
-    //    The textbox needs `&mut view` because it updates the scroll offset.
     widgets::draw_title(f, layout.middle_rows[0]);
     widgets::draw_input(f, state, &layout, view);
     widgets::draw_model(f, state, &layout);
