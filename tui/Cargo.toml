@@ -12,3 +12,9 @@ ratatui = { version = "0.29", features = ["crossterm"] }
 # crossterm: Low-level terminal manipulation
 # We need this explicitly for event handling (keyboard input)
 crossterm = "0.28"
+
+# unicode-segmentation: grapheme cluster boundaries.
+# We need this to wrap text by what the user SEES as one "character"
+# (e.g. "é" is one grapheme even though it's 2 bytes; emoji can be
+# multiple bytes but one grapheme). It's the right unit for column counting.
+unicode-segmentation = "1.12"
