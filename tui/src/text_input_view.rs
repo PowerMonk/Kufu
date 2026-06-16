@@ -63,6 +63,7 @@ impl TextInputView {
         // We want the cursor to be the LAST visible line at most.
         let window_end = self.scroll_top + visible_rows;
         if cursor_line >= window_end {
+            // cursor line + 1 means we want to scroll so the cursor line is the last visible line. We subtract visible_rows to get the new scroll_top, which means the cursor line will be at the bottom of the window. For example, if cursor_line is 10 and visible_rows is 5, we want to show lines 6-10, so scroll_top should be 6 (10 + 1 - 5).
             self.scroll_top = cursor_line + 1 - visible_rows;
         }
     }

@@ -25,6 +25,7 @@ use std::io;
 use crossterm::event::{self, Event, KeyCode, KeyEvent, KeyEventKind, KeyModifiers};
 use crossterm::execute;
 use crossterm::terminal::{disable_raw_mode, enable_raw_mode, EnterAlternateScreen, LeaveAlternateScreen};
+// The CrosstermBackend struct is a wrapper around a writer implementing Write, which is used to send commands to the terminal.
 use ratatui::{backend::CrosstermBackend, Terminal};
 
 use crate::state::AppState;
@@ -35,9 +36,11 @@ use crate::ui::widgets::nav_key_to_byte;
 fn main() -> io::Result<()> {
     // 1. Terminal setup. We do this in three steps so a single failure still
     //    leaves the terminal in a usable state for the OS.
+    //  ? is used for error handling. If any of these steps fail, the function will return the error immeadiately
     enable_raw_mode()?;
-    let mut stdout = io::stdout();
+    let mut stdout = io::stdout(); // stdout is out for drawing to the computer's terminal
     execute!(stdout, EnterAlternateScreen)?;
+    // we give stdout to crossterm because crossterm sends commands to the terminal
     let backend = CrosstermBackend::new(stdout);
     let mut terminal = Terminal::new(backend)?;
 
@@ -66,6 +69,7 @@ fn run_app<B: ratatui::backend::Backend>(terminal: &mut Terminal<B>) -> io::Resu
         // that happens after.
         let frame_width = terminal.size()?.width;
 
+        // | | is used for error handling. If the draw fails, the function will return the error immediately.
         terminal.draw(|f| {
             // `f.area()` is the current frame's area. We pass the same
             // width to the layout computation so draw and key handling
