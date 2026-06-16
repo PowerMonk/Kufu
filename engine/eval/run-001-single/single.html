@@ -1,0 +1,314 @@
+This single HTML file contains all the necessary structure, embedded CSS, and
+basic JavaScript for the "Kufu" landing page, meeting all specified design and
+technical requirements. ```html
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Kufu - Cooperative Local Coding Assistant</title>
+    <style>
+      /* --- CSS STYLES START HERE --- */
+
+      :root {
+        /* Color Palette Definition (Matte Dark Mode with Soft Pastels) */
+        --color-background: #1a1c23; /* Deep Charcoal/Slate Background */
+        --color-surface: #242735; /* Slightly lighter surface for cards/containers */
+        --color-text-primary: #e0e0e5; /* Off-white text */
+        --color-accent-lavender: #b8a1d5; /* Muted Lavender Accent */
+        --color-accent-sage: #9ba48f; /* Soft Sage Green Accent */
+        --color-accent-dustyrose: #d1adcb; /* Dusty Rose Accent (used sparingly) */
+
+        /* Text Contrast / Status Colors */
+        --color-success: #6fae7b;
+        --color-warning: #c4a258;
+
+        /* Typography */
+        --font-main:
+          "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+          Helvetica, Arial, sans-serif;
+      }
+
+      /* Basic Reset & Global Styles */
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: var(--font-main);
+        background-color: var(--color-background);
+        color: var(--color-text-primary);
+        line-height: 1.6;
+        scroll-behavior: smooth;
+      }
+
+      /* --- UTILITY CLASSES & LAYOUT --- */
+      .container {
+        width: 90%;
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 4rem 0;
+      }
+
+      /* Headings */
+      h1,
+      h2,
+      h3 {
+        margin-bottom: 1rem;
+        line-height: 1.2;
+      }
+
+      h1 {
+        font-size: 3rem;
+        font-weight: 700;
+        color: var(--color-text-primary);
+      }
+
+      h2 {
+        font-size: 2.2rem;
+        margin-bottom: 3rem;
+        text-align: center;
+        position: relative;
+      }
+
+      /* Underline effect for sections */
+      h2::after {
+        content: "";
+        display: block;
+        width: 60px;
+        height: 3px;
+        background-color: var(--color-accent-lavender);
+        margin: 10px auto 0;
+        border-radius: 2px;
+      }
+
+      /* Buttons */
+      .btn {
+        display: inline-block;
+        padding: 0.8rem 2rem;
+        background-color: var(--color-accent-lavender);
+        color: var(--color-background); /* Dark text on light accent button */
+        text-decoration: none;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        font-weight: 600;
+        transition:
+          background-color 0.3s,
+          transform 0.1s;
+        box-shadow: 0 4px 8px rgba(184, 161, 213, 0.3);
+      }
+
+      .btn:hover {
+        background-color: #9c85c4; /* Slightly darker lavender on hover */
+        transform: translateY(-2px);
+      }
+
+      /* --- SECTIONS STYLING --- */
+
+      /* HEADER & HERO SECTION */
+      #hero {
+        background-color: var(--color-surface);
+        padding: 6rem 0;
+        text-align: center;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      }
+
+      #hero h1 {
+        font-size: 3.8rem;
+        margin-bottom: 0.5rem;
+      }
+
+      #hero p.subtitle {
+        font-size: 1.4rem;
+        max-width: 700px;
+        margin: 1rem auto 2rem auto;
+        color: #b3b3c2;
+      }
+
+      /* SYSTEM ROLES SECTION */
+      #roles {
+        padding: 6rem 0;
+      }
+
+      .role-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 30px;
+        margin-top: 40px;
+      }
+
+      .role-card {
+        background-color: var(--color-surface);
+        border-radius: 12px;
+        padding: 30px;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+        border-top: 4px solid transparent; /* Placeholder for color accent */
+        transition:
+          transform 0.3s ease,
+          box-shadow 0.3s ease;
+      }
+
+      .role-card:hover {
+        transform: translateY(-8px) scale(1.02);
+        box-shadow: 0 15px 30px rgba(0, 0, 0, 0.35);
+      }
+
+      /* Specific Accent Styling for Roles */
+      #role-planner {
+        border-top-color: var(--color-accent-lavender);
+      }
+      #role-implementer {
+        border-top-color: var(--color-accent-sage);
+      }
+      #role-reviewer {
+        border-top-color: var(--color-accent-dustyrose);
+      }
+
+      .role-card h3 {
+        font-size: 1.5rem;
+        margin-bottom: 0.75rem;
+        display: flex;
+        align-items: center;
+      }
+
+      /* Role Icon/Indicator Simulation */
+      .role-card h3::before {
+        content: "✨"; /* Using an emoji for visual flair, can be replaced by SVG icons */
+        margin-right: 10px;
+      }
+
+      .role-card p strong {
+        display: block;
+        margin-top: 0.5rem;
+        color: var(--color-text-primary);
+      }
+
+      /* FOOTER */
+      #footer {
+        background-color: #12141a;
+        padding: 2rem 0;
+        border-top: 1px solid rgba(255, 255, 255, 0.05);
+        text-align: center;
+      }
+
+      /* --- RESPONSIVENESS --- */
+      @media (max-width: 768px) {
+        h1 {
+          font-size: 2.5rem;
+        }
+
+        #hero h1 {
+          font-size: 3rem;
+        }
+
+        #hero p.subtitle {
+          font-size: 1.1rem;
+        }
+
+        h2 {
+          font-size: 2rem;
+          margin-bottom: 2rem;
+        }
+
+        .role-card {
+          padding: 25px;
+        }
+      }
+
+      /* --- CSS STYLES END HERE --- */
+    </style>
+  </head>
+  <body>
+    <!-- HERO SECTION -->
+    <header id="hero">
+      <div class="container">
+        <h1>Kufu</h1>
+        <p class="subtitle">
+          The cooperative, local-first coding assistant that thinks like a team.
+        </p>
+        <p style="margin-bottom: 30px; max-width: 800px">
+          Tired of single-model hallucinations? Kufu orchestrates multiple
+          specialized small models (Planner, Implementer, Reviewer) to tackle
+          software engineering tasks the way human developers do.
+        </p>
+        <!-- Mock CTA -->
+        <a href="#roles" class="btn">Explore Architecture</a>
+      </div>
+    </header>
+
+    <!-- SYSTEM ROLES EXPLANATION SECTION -->
+    <section id="roles" class="container">
+      <h2>How Kufu Works: Cooperative Intelligence</h2>
+      <p
+        style="
+          text-align: center;
+          max-width: 800px;
+          margin: -20px auto 40px auto;
+        "
+      >
+        Kufu moves beyond the 'mega-model' trap. By assigning distinct roles, we
+        enforce structured thinking and rigorous checks throughout development.
+      </p>
+
+      <div class="role-grid">
+        <!-- Planner Role Card -->
+        <article id="role-planner" class="role-card">
+          <h3>Planner (The Strategist)</h3>
+          <p>
+            This model receives the high-level goal and breaks it down into
+            manageable, sequential steps. It creates the initial blueprint,
+            defining necessary files, APIs, and dependencies before any code is
+            written.
+          </p>
+          <strong>Focus: Architecture & Steps</strong>
+        </article>
+
+        <!-- Implementer Role Card -->
+        <article id="role-implementer" class="role-card">
+          <h3>Implementer (The Builder)</h3>
+          <p>
+            Taking the plan, this model writes and generates the actual code for
+            each step. It focuses on clean syntax, best practices specific to
+            the language, and fulfilling the requirements set by the Planner.
+          </p>
+          <strong>Focus: Code Generation & Syntax</strong>
+        </article>
+
+        <!-- Reviewer Role Card -->
+        <article id="role-reviewer" class="role-card">
+          <h3>Reviewer (The Guardian)</h3>
+          <p>
+            This crucial final step acts as a senior pair programmer. It
+            critically analyzes the generated code for bugs, security
+            vulnerabilities, performance bottlenecks, and adherence to
+            established conventions.
+          </p>
+          <strong>Focus: QA & Polish</strong>
+        </article>
+      </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer id="footer">
+      <div class="container" style="padding: 0">
+        <p>
+          &copy; <span id="current-year"></span> Kufu Project. Built with Open
+          Source Principles.
+        </p>
+        <p style="margin-top: 10px; font-size: 0.9rem">
+          Kufu is an experimental, local-first coding assistant.
+        </p>
+      </div>
+    </footer>
+
+    <!-- JAVASCRIPT FOR DYNAMIC CONTENT (Footer Year) -->
+    <script>
+      document.getElementById("current-year").textContent =
+        new Date().getFullYear();
+    </script>
+  </body>
+</html>
+```

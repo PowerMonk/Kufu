@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Kufu - Local Multi-Agent Coding</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header>
+      <h1>Kufu</h1>
+      <p>Small models. Strict responsibilities. Real results.</p>
+    </header>
+
+    <main>
+      <section class="intro">
+        <h2>What is Kufu?</h2>
+        <p>
+          An experimental coding assistant exploring whether multiple
+          constrained local language models can cooperate to perform small
+          software tasks effectively.
+        </p>
+      </section>
+
+      <section class="roles">
+        <h2>The Agents</h2>
+        <div class="card-container">
+          <div class="card">
+            <h3>Planner</h3>
+            <p>
+              Decides what should happen and creates structured tasks. Never
+              writes code.
+            </p>
+          </div>
+          <div class="card">
+            <h3>Implementer</h3>
+            <p>Receives tasks and modifies code. Never creates plans.</p>
+          </div>
+          <div class="card">
+            <h3>Reviewer</h3>
+            <p>
+              Validates if the plan was executed properly. Never rewrites code.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section class="terminal">
+        <h2>System Events</h2>
+        <pre><code class="language-json">{"event": "PIPELINE_COMPLETED", "status": "success"}</code></pre>
+      </section>
+    </main>
+
+    <footer>
+      <p>Kufu Project &copy; 2026</p>
+    </footer>
+  </body>
+</html>
