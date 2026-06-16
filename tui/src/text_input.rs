@@ -59,6 +59,7 @@ impl TextInput {
         // `floor_char_boundary` returns the largest valid char boundary
         // `<= byte`. Combined with `min(buffer.len())`, this guarantees
         // a safe, in-range cursor no matter what the caller passes.
+        // byte.min returns the question is the byte greater than the buffer? If it is, we use the buffer length instead, which means the cursor will be at the end of the buffer. If it's not, we use the byte as is. Then floor_char_boundary makes sure it's on a char boundary.
         self.cursor = self.buffer.floor_char_boundary(byte.min(self.buffer.len()));
     }
 
@@ -73,7 +74,7 @@ impl TextInput {
         // library; you can see the full list with `cargo doc crossterm`.
         match key {
             // The user typed a printable character (including '\n' for
-            // explicit newlines, since the main loop converts Shift+Enter
+            // explicit newlines, since the main loop converts Ctrl+Enter
             // into `Char('\n')`).
             KeyCode::Char(c) => self.insert_char(c),
 
@@ -118,6 +119,7 @@ impl TextInput {
 
         // `drain` removes a range and returns the removed chars as an
         // iterator. We don't need them, so we just drop the iterator.
+        // it is dropped by not assigning it to anything. The range is `prev..self.cursor`
         self.buffer.drain(prev..self.cursor);
         self.cursor = prev;
     }
@@ -131,7 +133,9 @@ impl TextInput {
         // Walk back one grapheme cluster. We do this by collecting the
         // graphemes in the prefix, taking the second-to-last, and asking
         // for its byte offset.
+        // The RangeTo ..end contains all values with x < end.
         let prefix = &self.buffer[..self.cursor];
+        // this means "give me an iterator of (byte_offset, grapheme) for each grapheme in the prefix". If the prefix is "he👩‍👩‍👧‍👦llo" and the cursor is at the end, the graphemes would be ["h", "e", "👩‍👩‍👧‍👦", "l", "l", "o"] and the byte offsets would be [0, 1, 2, 14, 15, 16] (the emoji is 12 bytes long). If the cursor is after the "e", the graphemes would be ["h", "e"] and the byte offsets would be [0, 1]. We want to move left by one grapheme, so we want to jump to the start of the previous grapheme. That's why we take the second-to-last grapheme: if the cursor is at the end, we want to jump to the start of "l", which is the second-to-last grapheme. If the cursor is after "e", we want to jump to the start of "h", which is also the second-to-last grapheme.
         let graphemes: Vec<(usize, &str)> = prefix.grapheme_indices(true).collect();
         if let Some((byte_idx, _)) = graphemes.get(graphemes.len() - 2) {
             self.cursor = *byte_idx;

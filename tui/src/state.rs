@@ -41,7 +41,7 @@ pub struct AppState {
     /// The only variant today is `AppMode::Prompt`, so this field is
     /// currently set but not branched on. It exists so the next page
     /// (`Help`, `Settings`, ...) has an obvious place to live.
-    #[allow(dead_code)]
+    #[allow(dead_code)] // this means "don't warn that this field is never read". It's set in `new` but not used
     pub mode: AppMode,
     /// The textbox state.
     pub input: TextInput,

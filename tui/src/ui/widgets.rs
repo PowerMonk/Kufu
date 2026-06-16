@@ -351,6 +351,7 @@ fn draw_text(
     let start = view.scroll_top;
     let end = (start + visible_rows).min(layout.lines.len());
 
+    // start..end computes for us the range of visible lines
     let lines: Vec<Line> = layout.lines[start..end]
         .iter()
         .map(|line| {

@@ -40,6 +40,7 @@ pub struct VisualLine {
 
 impl VisualLine {
     /// Returns the text of this line as a slice of the original buffer.
+    // the ' lifetime annotation means that the returned string slice cannot outlive the buffer reference passed in. This is a standard Rust pattern for safe borrowing.
     pub fn text<'a>(&self, buffer: &'a str) -> &'a str {
         // `get` is the safe version of slicing: returns `None` if the indices
         // aren't on a UTF-8 char boundary or are out of range. We trust our
@@ -48,12 +49,12 @@ impl VisualLine {
     }
 }
 
-/// A visual cursor position: (line index, column in grapheme clusters).
-///
-/// We measure columns in *grapheme clusters*, not bytes or chars. A grapheme
-/// cluster is what a user sees as one "character" — `é` is one cluster even
-/// though it's two bytes, and emoji can be multiple bytes but one cluster.
-/// This matches how every modern text editor counts columns.
+// A visual cursor position: (line index, column in grapheme clusters).
+//
+// We measure columns in *grapheme clusters*, not bytes or chars. A grapheme
+// cluster is what a user sees as one "character" — `é` is one cluster even
+// though it's two bytes, and emoji can be multiple bytes but one cluster.
+// This matches how every modern text editor counts columns.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
 pub struct VisualCursor {
     /// Index into the `TextLayout::lines` vector.
@@ -199,12 +200,13 @@ fn byte_to_visual(lines: &[VisualLine], buffer: &str, byte_cursor: usize) -> Vis
         // The last line gets a special case so a cursor past its end still
         // belongs to it (rather than being "after" it).
         let in_range = cursor_byte <= line.end;
-        let is_last = line_index + 1 == lines.len();
+        let is_last = line_index + 1 == lines.len(); // +1 because its zero-based
         if in_range || is_last {
             // Count grapheme clusters from `line.start` to `cursor_byte`
             // to get the column.
             let line_text = line.text(buffer);
             let prefix_len = cursor_byte.saturating_sub(line.start);
+            // the column is how many graphemes are in the line's text up to the cursor. We take a slice of the line's text from the start to the cursor, and count how many graphemes are in that slice. That's the column number.
             let column = line_text[..prefix_len].graphemes(true).count();
             return VisualCursor {
                 line: line_index,
