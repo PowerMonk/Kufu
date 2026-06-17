@@ -28,6 +28,9 @@ export function buildPlannerSystemPrompt(): string {
     "  - requiredFiles is exhaustive. The implementer will NOT be given any other file.",
     "  - preferredOutcome MAY be a brand-new file (use action CREATE).",
     "  - Prefer CREATE for new functionality, UPDATE for small changes, DELETE sparingly.",
+    "  - `task` describes what preferredOutcome should become or contain.",
+    "    Do not repeat the action verb. Good: 'A landing page with a hero section,",
+    "    an agents section, embedded CSS, and a footer.' Bad: 'UPDATE'. Bad: 'Modify index.html'.",
     "  - Respond as a single JSON object matching the schema. No prose, no markdown fences.",
   ].join("\n");
 }

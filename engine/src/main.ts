@@ -5,6 +5,8 @@
 //       --repo eval --prompt simple-prompt.md --out eval/run-001
 //   bun run src/main.ts run single --model gemma4:e4b --num-ctx 8192 \
 //       --prompt simple-prompt.md --out eval/run-001-single
+//   bun run src/main.ts run single --model gemma4:e4b --num-ctx 8192 \
+//       --prompt simple-prompt.md --out eval/run-001-single --thinking
 
 import { readFile } from "node:fs/promises";
 import { resolve } from "node:path";
@@ -22,6 +24,7 @@ interface Args {
   prompt: string;
   repo?: string;
   out: string;
+  thinking?: boolean;
 }
 
 function parseArgs(argv: string[]): Args {
@@ -31,18 +34,29 @@ function parseArgs(argv: string[]): Args {
   }
   const subcommand = args[1] as "pipeline" | "single";
 
-  const map = new Map<string, string>();
-  for (let i = 2; i < args.length; i += 2) {
+  const map = new Map<string, string | boolean>();
+  let i = 2;
+  while (i < args.length) {
     const key = args[i];
-    const value = args[i + 1];
-    if (!key.startsWith("--") || value === undefined) usage();
-    map.set(key, value);
+    if (!key.startsWith("--")) usage();
+    
+    // Check if this is a boolean flag (no value, or next arg is another flag)
+    const nextArg = args[i + 1];
+    if (nextArg === undefined || nextArg.startsWith("--")) {
+      // Boolean flag
+      map.set(key, true);
+      i += 1;
+    } else {
+      // Flag with value
+      map.set(key, nextArg);
+      i += 2;
+    }
   }
 
-  const model = map.get("--model");
-  const num_ctx = map.get("--num-ctx");
-  const prompt = map.get("--prompt");
-  const out = map.get("--out");
+  const model = map.get("--model") as string | undefined;
+  const num_ctx = map.get("--num-ctx") as string | undefined;
+  const prompt = map.get("--prompt") as string | undefined;
+  const out = map.get("--out") as string | undefined;
   if (!model || !num_ctx || !prompt || !out) usage();
 
   const num = Number(num_ctx);
@@ -58,11 +72,21 @@ function parseArgs(argv: string[]): Args {
     prompt,
     out,
   };
-  const repo = map.get("--repo");
+  const repo = map.get("--repo") as string | undefined;
   if (repo) result.repo = repo;
   if (subcommand === "pipeline" && !result.repo) {
     throw new Error("--repo is required for the pipeline subcommand");
   }
+  
+  // Handle --thinking flag (boolean, only for single subcommand)
+  const thinking = map.get("--thinking");
+  if (thinking === true) {
+    if (subcommand !== "single") {
+      throw new Error("--thinking is only supported for the single subcommand");
+    }
+    result.thinking = true;
+  }
+  
   return result;
 }
 
@@ -70,7 +94,7 @@ function usage(): never {
   console.error(
     "Usage:\n" +
       "  bun run src/main.ts run pipeline --model M --num-ctx N --repo R --prompt P --out O\n" +
-      "  bun run src/main.ts run single   --model M --num-ctx N --prompt P --out O",
+      "  bun run src/main.ts run single   --model M --num-ctx N --prompt P --out O [--thinking]",
   );
   process.exit(2);
 }
@@ -90,6 +114,7 @@ async function main(): Promise<void> {
       promptFile,
       outDir: args.out,
       chat,
+      thinking: args.thinking,
     });
     console.log(renderReport(record));
   } else {

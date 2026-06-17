@@ -57,6 +57,8 @@ export interface SingleInputs {
   promptFile: string;
   outDir: string;
   chat: typeof import("./ollama.ts").default;
+  /** Enable thinking mode (default: false). */
+  thinking?: boolean;
 }
 
 /** Outputs of a single-model run. */

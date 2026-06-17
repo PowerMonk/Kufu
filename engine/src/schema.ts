@@ -19,7 +19,6 @@ export type FileAction = z.infer<typeof FileActionSchema>;
 
 /** The planner's contract. Validated before anything else uses it. */
 export const PlannerTaskSchema = z.object({
-  id: z.string().min(1),
   task: z.string().min(1),
   preferredOutcome: z.string().min(1),
   requiredFiles: z.array(z.string()),
@@ -37,10 +36,9 @@ export function plannerTaskJsonSchema(): Record<string, unknown> {
   return {
     type: "object",
     properties: {
-      id: { type: "string", description: "A short identifier for this task." },
       task: {
         type: "string",
-        description: "What the implementer should do, in one or two sentences.",
+        description: "What the preferredOutcome file should become or contain.",
       },
       preferredOutcome: {
         type: "string",
@@ -59,6 +57,6 @@ export function plannerTaskJsonSchema(): Record<string, unknown> {
         description: "What the implementer does to preferredOutcome.",
       },
     },
-    required: ["id", "task", "preferredOutcome", "requiredFiles", "action"],
+    required: ["task", "preferredOutcome", "requiredFiles", "action"],
   };
 }

@@ -1,0 +1,292 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kufu - Decentralized Coding Assistant</title>
+    <!-- Embedded CSS -->
+    <style>
+        /* --- 1. Color Variables & Base Styles --- */
+        :root {
+            --bg-primary: #1e2430; /* Dark Slate/Charcoal Background */
+            --text-main: #e0e6ed;  /* Off-white Text */
+            --accent-lavender: #b8c1ec; /* Muted Lavender (Primary Accent) */
+            --accent-sage: #a6b79f;    /* Soft Sage Green (Secondary Accent) */
+            --accent-card: #2a3445;   /* Slightly lighter dark for cards/sections */
+            --border-color: #384152; /* Subtle border color */
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-primary);
+            color: var(--text-main);
+            line-height: 1.6;
+        }
+
+        a {
+            color: var(--accent-lavender);
+            text-decoration: none;
+            transition: color 0.2s ease;
+        }
+
+        a:hover {
+            color: #c8d3f2; /* Slightly brighter hover state */
+        }
+
+        section {
+            padding: 80px 40px;
+            max-width: 1200px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        /* --- 2. Typography & Elements --- */
+        h1, h2 {
+            font-weight: 700;
+            margin-bottom: 20px;
+        }
+
+        p {
+            margin-bottom: 1rem;
+            opacity: 0.85;
+        }
+
+        .container {
+            padding: 2rem 0;
+        }
+
+        /* --- 3. Header/Navigation (Optional, but good for structure) --- */
+        header {
+            background-color: var(--bg-primary);
+            padding: 15px 40px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 900;
+            letter-spacing: -0.5px;
+            color: var(--accent-lavender);
+        }
+        
+        /* --- 4. Hero Section --- */
+        #hero {
+            padding: 120px 40px;
+            background-color: var(--bg-primary);
+        }
+
+        #hero h1 {
+            font-size: 3.5rem;
+            margin-bottom: 10px;
+            line-height: 1.1;
+        }
+
+        #hero p.tagline {
+            font-size: 1.4rem;
+            max-width: 650px;
+            margin: 20px auto 30px;
+            opacity: 0.9;
+        }
+
+        .cta-button {
+            display: inline-block;
+            padding: 14px 30px;
+            background-color: var(--accent-lavender);
+            color: #1e2430; /* Contrast text color */
+            font-size: 1rem;
+            font-weight: 600;
+            border-radius: 8px;
+            transition: background-color 0.3s ease, transform 0.1s;
+            border: none;
+            cursor: pointer;
+        }
+
+        .cta-button:hover {
+            background-color: #a0acdb; /* Slightly darker lavender */
+            transform: translateY(-2px);
+        }
+
+
+        /* --- 5. Roles Section (The Core Feature) --- */
+        #roles h2 {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+            color: var(--accent-sage);
+        }
+
+        #roles p {
+            max-width: 700px;
+            margin: 20px auto 40px;
+        }
+
+        .roles-grid {
+            display: flex;
+            gap: 30px;
+            justify-content: center;
+            margin-top: 40px;
+        }
+
+        .role-card {
+            background-color: var(--accent-card);
+            padding: 30px;
+            border-radius: 12px;
+            flex: 1; /* Equal width distribution */
+            max-width: 350px;
+            text-align: left;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            border-top: 3px solid var(--accent-lavender); /* Visual separation */
+            transition: transform 0.3s ease;
+        }
+
+        .role-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+        }
+
+        .role-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+            color: var(--text-main);
+        }
+
+        .role-card p strong {
+            display: block;
+            margin-top: 8px;
+            color: var(--accent-sage);
+        }
+
+
+        /* --- 6. Footer --- */
+        footer {
+            background-color: #151c24; /* Even darker than primary */
+            padding: 30px 20px;
+            font-size: 0.9rem;
+            border-top: 1px solid var(--border-color);
+        }
+
+        footer div {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        
+        .social-links a {
+             margin-right: 15px;
+             opacity: 0.7;
+        }
+
+
+        /* --- 7. Responsiveness (Mobile adjustments) --- */
+        @media (max-width: 800px) {
+            /* Adjust Hero text size for smaller screens */
+            #hero h1 {
+                font-size: 2.5rem;
+            }
+
+            #hero p.tagline {
+                font-size: 1.2rem;
+            }
+
+            /* Stack the roles cards vertically */
+            .roles-grid {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .role-card {
+                max-width: 90%; /* Wider on mobile */
+                margin-bottom: 20px;
+            }
+        }
+
+        @media (max-width: 480px) {
+             header {
+                 flex-direction: column;
+                 padding: 15px;
+             }
+             .logo {
+                 margin-bottom: 10px;
+             }
+             h2 {
+                font-size: 2rem;
+            }
+        }
+
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="logo">Kufu</div>
+        <nav>
+            <a href="#roles" style="margin-right: 20px;">Features</a>
+            <a href="#" class="cta-button" style="padding: 8px 15px; font-size: 0.9rem; background-color: var(--accent-sage); color: var(--bg-primary);">Get Started</h3>
+        </nav>
+    </header>
+
+    <main>
+        <!-- HERO SECTION -->
+        <section id="hero">
+            <h1>The Distributed Brain for Software Development</h1>
+            <p class="tagline">Kufu is an experimental, local-first coding assistant that orchestrates multiple specialized AI models to solve complex engineering tasks cooperatively.</p>
+            <button class="cta-button" onclick="location.href='#roles'">Explore the Architecture</button>
+        </section>
+
+        <!-- ROLES/EXPLANATION SECTION -->
+        <section id="roles">
+            <h2>How It Works: Coordinated Intelligence</h2>
+            <p>Instead of relying on a single monolithic cloud model, Kufu deploys specialized models that work together. Each model has a unique role, ensuring depth and rigorous review at every step.</p>
+
+            <div class="roles-grid">
+
+                <!-- Role 1: Planner -->
+                <article class="role-card" style="border-top-color: var(--accent-lavender);">
+                    <h3>🧑‍🧠 The Planner</h3>
+                    <p>The initial orchestrator. Kufu's planner model takes a high-level requirement (e.g., "Implement user authentication flow") and breaks it down into granular, manageable tasks, defining the architecture and dependencies.</p>
+                    <strong>Key Function:</strong> Task decomposition & System Architecture.
+                </article>
+
+                <!-- Role 2: Implementer -->
+                <article class="role-card" style="border-top-color: var(--accent-sage);">
+                    <h3>✍️ The Implementer</h3>
+                    <p>This model takes the plan and converts abstract tasks into executable code. It handles boilerplate, function generation, and filling in specific language requirements (e.g., Python backend logic or React component structure).</p>
+                    <strong>Key Function:</strong> Code Generation & Feature Implementation.
+                </article>
+
+                <!-- Role 3: Reviewer -->
+                <article class="role-card" style="border-top-color: #ffb8c1;"> <!-- Using a slight dusty pink for contrast accent -->
+                    <h3>🔎 The Reviewer</h3>
+                    <p>The crucial quality gate. This model analyzes the generated code against security best practices, performance metrics, and architectural patterns, providing detailed critiques and necessary refactorings.</p>
+                    <strong>Key Function:</strong> QA, Security Auditing & Code Refinement.
+                </article>
+
+            </div>
+        </section>
+    </main>
+
+    <!-- FOOTER -->
+    <footer>
+        <div>
+            <p>&copy; 2024 Kufu Project. Built with Open Source Principles.</p>
+        </div>
+        <div class="social-links">
+            <a href="#" aria-label="GitHub">/GitHub</a> | 
+            <a href="#" aria-label="Documentation">/Docs</a> | 
+            <a href="#" aria-label="Contributing Guide">/Contribute</a>
+        </div>
+    </footer>
+
+</body>
+</html>
+```
