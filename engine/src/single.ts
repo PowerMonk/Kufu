@@ -10,24 +10,39 @@ import type { SingleInputs, SingleOutputs } from "./types.ts";
  * No planning, no file fetching. The result is whatever the model produces.
  */
 export async function runSingle(inputs: SingleInputs): Promise<SingleOutputs> {
-  const bench = new Benchmark("single", inputs.model, inputs.num_ctx, inputs.promptFile);
+  const bench = new Benchmark(
+    "single",
+    inputs.model,
+    inputs.num_ctx,
+    inputs.promptFile,
+  );
 
   const messages = [{ role: "user" as const, content: inputs.promptText }];
   const result = await inputs.chat({
     model: inputs.model,
     messages,
     num_ctx: inputs.num_ctx,
-    think: false,
+    think: inputs.thinking ?? false,
   });
 
-  bench.record("single", result.prompt_eval_count, result.eval_count, result.total_duration_ns);
+  bench.record(
+    "single",
+    result.prompt_eval_count,
+    result.eval_count,
+    result.total_duration_ns,
+  );
   console.log(
     `[single] in=${result.prompt_eval_count} out=${result.eval_count} ` +
-    `(${Math.round(result.total_duration_ns / 1_000_000)}ms)`,
+      `(${Math.round(result.total_duration_ns / 1_000_000)}ms)`,
   );
 
   await mkdir(inputs.outDir, { recursive: true });
   await writeFile(`${inputs.outDir}/single.txt`, result.content);
+
+  // Save thinking trace if thinking was enabled and there's content
+  if (inputs.thinking && result.thinking) {
+    await writeFile(`${inputs.outDir}/thinking.txt`, result.thinking);
+  }
 
   const record = bench.build();
   await writeReport(record, inputs.outDir);

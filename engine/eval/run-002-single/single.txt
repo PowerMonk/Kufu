@@ -1,0 +1,232 @@
+Here is the complete, single-file HTML solution for the "Kufu" landing page.
+
+This design uses a deep slate/charcoal background with muted lavender and sage green accents to achieve a modern, soft dark mode aesthetic suitable for a developer tool.
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kufu - The Cooperative Coding Assistant</title>
+    <style>
+        /* --- CSS STYLES --- */
+
+        :root {
+            /* Color Palette Definition (Matte Dark Mode) */
+            --bg-color: #2c3e50; /* Deep Charcoal / Slate Blue */
+            --text-color: #ecf0f1; /* Off-White Text */
+            --primary-accent: #b891d7; /* Muted Lavender */
+            --secondary-accent: #a3c1ad; /* Soft Sage Green */
+            --border-color: #4f627e; /* Slightly lighter slate for depth */
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+
+        /* Utility Classes & Layout */
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 4rem 0;
+        }
+
+        section {
+            padding: 60px 0;
+        }
+
+        h1, h2, h3 {
+            font-weight: 300; /* Light font weight for a modern feel */
+            margin-bottom: 1.5rem;
+        }
+
+        /* --- Hero Section Styling --- */
+        #hero {
+            background: linear-gradient(180deg, var(--bg-color) 0%, #243346 100%);
+            text-align: center;
+            padding: 8rem 0 6rem;
+        }
+
+        #hero h1 {
+            font-size: 3.5em;
+            margin-bottom: 0.5rem;
+            letter-spacing: -0.05em;
+            color: #ecf0f1;
+        }
+
+        #hero p.subtitle {
+            font-size: 1.4em;
+            max-width: 700px;
+            margin: 0 auto 2rem;
+            opacity: 0.8;
+        }
+
+        .cta-button {
+            display: inline-block;
+            padding: 0.9rem 2.5rem;
+            background-color: var(--primary-accent);
+            color: var(--bg-color);
+            text-decoration: none;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            transition: background-color 0.3s, transform 0.1s;
+            box-shadow: 0 4px 15px rgba(184, 145, 215, 0.4);
+        }
+
+        .cta-button:hover {
+            background-color: #c6b1e0; /* Slightly lighter hover */
+            transform: translateY(-2px);
+        }
+
+        /* --- Roles Section Styling (The Core Feature) --- */
+        #roles {
+            background-color: #243346; /* Slightly different background for separation */
+            text-align: center;
+        }
+
+        #roles h2 {
+            font-size: 2.5em;
+            margin-bottom: 3rem;
+        }
+
+        .roles-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+        }
+
+        .role-card {
+            background-color: #2c3e50; /* Match root background */
+            border: 1px solid var(--border-color);
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .role-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 30px rgba(184, 145, 215, 0.2);
+        }
+
+        .role-icon {
+            font-size: 2em;
+            margin-bottom: 1rem;
+            display: block;
+            /* Icon color differentiation */
+            color: var(--primary-accent); 
+        }
+
+        .role-card h3 {
+            color: var(--secondary-accent);
+            font-size: 1.6em;
+        }
+        
+        /* Specific accenting for roles */
+        #planner .role-icon { color: #ffc87c; /* Soft Orange/Gold for planning */ }
+        #implementer .role-icon { color: var(--secondary-accent); }
+        #reviewer .role-icon { color: var(--primary-accent); }
+
+
+        /* --- Footer Styling --- */
+        footer {
+            text-align: center;
+            padding: 2rem 0;
+            border-top: 1px solid var(--border-color);
+            font-size: 0.9em;
+            opacity: 0.7;
+        }
+
+        /* --- Responsiveness --- */
+        @media (max-width: 768px) {
+            #hero h1 {
+                font-size: 2.5em;
+            }
+
+            #hero p.subtitle {
+                font-size: 1.1em;
+            }
+
+            .role-card {
+                padding: 20px;
+            }
+        }
+
+    </style>
+</head>
+<body>
+
+    <!-- HEADER/NAVIGATION (Minimal for Landing Page) -->
+    <header style="background-color: #1f2a38; padding: 1rem 0;">
+        <div class="container" style="display: flex; justify-content: space-between; align-items: center;">
+            <h2 style="font-size: 1.5em; color: var(--primary-accent);">Kufu</h2>
+            <nav>
+                <a href="#roles" style="color: var(--text-color); text-decoration: none; margin-left: 20px;">Roles</a>
+                <button class="cta-button" style="padding: 0.5rem 1.5rem; font-size: 0.9em; background-color: var(--secondary-accent); color: var(--bg-color);">Get Started</button>
+            </nav>
+        </div>
+    </header>
+
+    <!-- HERO SECTION -->
+    <section id="hero">
+        <div class="container">
+            <h1>The Cooperative AI Coding Assistant</h1>
+            <p class="subtitle">Kufu orchestrates multiple specialized, local language models to solve complex software engineering tasks—smarter than any single cloud giant.</p>
+            <!-- Using a generic placeholder button style -->
+            <a href="#roles" class="cta-button">See How It Works</a>
+        </div>
+    </section>
+
+    <!-- EXPLANATION / ROLES SECTION -->
+    <section id="roles" class="container">
+        <h2>The Power of Specialization</h2>
+        <p style="text-align: center; max-width: 800px; margin: -20px auto 40px;">Kufu doesn't rely on one monolithic model. It intelligently routes tasks between three dedicated agents, fostering true cooperative development.</p>
+
+        <div class="roles-grid">
+            
+            <!-- Planner Role -->
+            <div class="role-card" id="planner">
+                <span class="role-icon">&#9881;</span> <!-- Placeholder for a planning/map icon -->
+                <h3>The Planner</h3>
+                <p>Defines the overall architecture and breaks down nebulous requirements into discrete, manageable engineering tasks. It acts as the conductor of the symphony.</p>
+            </div>
+
+            <!-- Implementer Role -->
+            <div class="role-card" id="implementer">
+                <span class="role-icon">&#123;</span> <!-- Placeholder for code/bracket icon -->
+                <h3>The Implementer</h3>
+                <p>Writes the actual boilerplate, function bodies, and necessary classes based on the plan. It focuses purely on generating clean, tested code snippets.</p>
+            </div>
+
+            <!-- Reviewer Role -->
+            <div class="role-card" id="reviewer">
+                <span class="role-icon">&#10003;</span> <!-- Checkmark for review icon -->
+                <h3>The Reviewer</h3>
+                <p>Critically assesses the generated code against best practices, security standards, and initial requirements. It ensures robustness before final output.</p>
+            </div>
+
+        </div>
+    </section>
+    
+    <!-- FOOTER -->
+    <footer>
+        <div class="container">
+            &copy; 2024 Kufu AI. Open Source Initiative. | Designed with cooperative intelligence.
+        </div>
+    </footer>
+
+</body>
+</html>
+```

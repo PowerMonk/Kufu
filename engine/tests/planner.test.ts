@@ -16,8 +16,7 @@ function fakeChat(respondWith: string): (req: unknown) => Promise<OllamaChatResu
 
 test("runPlanner returns a validated PlannerTask from a clean JSON response", async () => {
   const fake = fakeChat(JSON.stringify({
-    id: "task-1",
-    task: "Create landing page.",
+    task: "A landing page with a hero section and a footer.",
     preferredOutcome: "eval/index.html",
     requiredFiles: ["eval/readme.md"],
     action: "UPDATE",
@@ -29,15 +28,14 @@ test("runPlanner returns a validated PlannerTask from a clean JSON response", as
     availableFiles: ["eval/index.html", "eval/readme.md", "eval/styles.css"],
     chat: fake as never,
   });
-  expect(task.id).toBe("task-1");
+  expect(task.preferredOutcome).toBe("eval/index.html");
   expect(task.action).toBe("UPDATE");
   expect(result.prompt_eval_count).toBe(100);
 });
 
 test("runPlanner strips markdown fences", async () => {
   const fake = fakeChat("```json\n" + JSON.stringify({
-    id: "t",
-    task: "x",
+    task: "A simple page.",
     preferredOutcome: "p.txt",
     requiredFiles: [],
     action: "CREATE",
@@ -49,7 +47,7 @@ test("runPlanner strips markdown fences", async () => {
     availableFiles: [],
     chat: fake as never,
   });
-  expect(task.id).toBe("t");
+  expect(task.preferredOutcome).toBe("p.txt");
 });
 
 test("runPlanner rejects an invalid JSON response", async () => {
@@ -67,8 +65,7 @@ test("runPlanner rejects an invalid JSON response", async () => {
 
 test("runPlanner rejects a requiredFile that doesn't exist in the repo", async () => {
   const fake = fakeChat(JSON.stringify({
-    id: "t",
-    task: "x",
+    task: "A new page.",
     preferredOutcome: "new.ts",
     requiredFiles: ["nope.ts"],
     action: "CREATE",
@@ -86,8 +83,7 @@ test("runPlanner rejects a requiredFile that doesn't exist in the repo", async (
 
 test("runPlanner rejects an action that is not in the enum", async () => {
   const fake = fakeChat(JSON.stringify({
-    id: "t",
-    task: "x",
+    task: "A new page.",
     preferredOutcome: "new.ts",
     requiredFiles: [],
     action: "REWRITE",

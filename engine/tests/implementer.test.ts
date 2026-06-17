@@ -19,8 +19,7 @@ test("runImplementer returns the raw content and metrics", async () => {
     model: "m",
     num_ctx: 4096,
     task: {
-      id: "t",
-      task: "Make a page",
+      task: "A simple page.",
       preferredOutcome: "index.html",
       requiredFiles: [],
       action: "CREATE",

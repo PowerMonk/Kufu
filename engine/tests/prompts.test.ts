@@ -14,6 +14,7 @@ test("planner system prompt declares the role and the rules", () => {
   expect(s).toContain("file NAMES");
   expect(s).toContain("requiredFiles is exhaustive");
   expect(s).toContain("preferredOutcome MAY be a brand-new file");
+  expect(s).toContain("what preferredOutcome should become");
 });
 
 test("planner user prompt embeds the file list and the user request", () => {
