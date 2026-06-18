@@ -27,10 +27,10 @@ pub fn draw(f: &mut Frame, state: &AppState, view: &mut TextInputView) {
     // 2. Paint the background first so every other widget sits on it.
     widgets::draw_background(f, layout.screen);
 
-    // 3. Draw the four widgets in the middle band.
+    // 3. Draw widgets in the middle band.
+    //    draw_model is called inside draw_input so it follows the box.
     widgets::draw_title(f, layout.middle_rows[0]);
     widgets::draw_input(f, state, &layout, view);
-    widgets::draw_model(f, state, &layout);
 
     // 4. Version label lives in the bottom-right of the WHOLE screen.
     widgets::draw_version(f, &layout);
