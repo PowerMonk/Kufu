@@ -53,6 +53,10 @@ const VERSION_RIGHT_MARGIN: u16 = 2;
 /// How many rows above the bottom line the version label sits.
 const VERSION_BOTTOM_MARGIN: u16 = 1;
 
+/// Gap between the textbox and the model line, in rows.
+/// The model line sits this many rows BELOW the textbox's actual bottom edge.
+const MODEL_GAP: u16 = 1;
+
 /// Total height the layout reserves for the textbox, in cells, including
 /// borders AND padding. This is the MAXIMUM the textbox will ever be; the
 /// actual rendered height shrinks when there's less content.
@@ -90,10 +94,10 @@ pub struct FrameLayout {
     /// The textbox column area: `[0]` left margin, `[1]` textbox, `[2]` right margin.
     /// Computed against the textbox row only.
     pub input_columns: std::rc::Rc<[Rect]>,
-    /// The model line column area: same proportions as `input_columns`,
-    /// but computed against the model row. This puts the model BELOW the
-    /// textbox and aligned with it.
-    pub model_columns: std::rc::Rc<[Rect]>,
+    // model_columns was removed in commit <pending>.
+    // The model line's rect is now computed dynamically in draw_input
+    // from the textbox's actual bottom edge, so it follows the textbox
+    // instead of staying at a fixed position.
 }
 
 impl FrameLayout {
@@ -134,22 +138,10 @@ impl FrameLayout {
             ])
             .split(content_rows[2]);
 
-        // The model line column: same proportions, but computed against
-        // the model row, so the model line sits BELOW the textbox.
-        let model_columns = Layout::default()
-            .direction(Direction::Horizontal)
-            .constraints([
-                Constraint::Ratio(1, 8),
-                Constraint::Ratio(6, 8),
-                Constraint::Ratio(1, 8),
-            ])
-            .split(content_rows[3]);
-
         Self {
             screen: area,
             middle_rows: content_rows,
             input_columns,
-            model_columns,
         }
     }
 }
@@ -188,9 +180,10 @@ pub fn draw_title(f: &mut Frame, area: Rect) {
 }
 
 /// Draws the model info row ("model X | ctx: 128k").
-pub fn draw_model(f: &mut Frame, state: &AppState, layout: &FrameLayout) {
-    let model_area = layout.model_columns[1];
-
+/// `model_area` is the rectangle where the model text should be painted.
+/// It is computed externally so its vertical position can follow the
+/// textbox's actual bottom edge.
+pub fn draw_model(f: &mut Frame, state: &AppState, model_area: Rect) {
     let line = Line::from(vec![
         Span::styled("model ", Style::default().fg(theme::ACCENT_ALT)),
         Span::styled(&state.model.name, Style::default().fg(theme::TEXT)),
@@ -287,20 +280,31 @@ pub fn draw_input(
         .split(box_outer);
     let box_area = box_split[0];
 
-    // Step 3: compute the FINAL layout at the actual content width.
+    // Step 3: compute where the model line goes — directly below the
+    // textbox's actual bottom edge, with a 1-row gap.
+    let model_y = box_area.y + box_area.height + MODEL_GAP;
+    let model_area = Rect {
+        x: box_outer.x,
+        y: model_y,
+        width: box_outer.width,
+        height: 1,
+    };
+    draw_model(f, state, model_area);
+
+    // Step 4: compute the FINAL layout at the actual content width.
     let content_width = (box_area.width.saturating_sub(2))
         .saturating_sub(INPUT_PADDING * 2)
         .saturating_sub(1) as usize;
     let text_layout = TextLayout::compute(&state.input.buffer, content_width, state.input.cursor);
 
-    // Step 4: paint the box border and surface.
+    // Step 5: paint the box border and surface.
     let block = Block::default()
         .borders(Borders::ALL)
         .border_style(Style::default().fg(theme::BORDER))
         .style(Style::default().bg(theme::SURFACE));
     f.render_widget(block, box_area);
 
-    // Step 5: the content area inside the box, with padding on all four sides.
+    // Step 6: the content area inside the box, with padding on all four sides.
     let content_area = Rect {
         x: box_area.x + 1 + INPUT_PADDING,
         y: box_area.y + 1 + INPUT_PADDING,
