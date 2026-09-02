@@ -1,0 +1,228 @@
+Here is a single, self-contained HTML file for the Kufu landing page, meeting all the specified requirements.
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kufu - Local-First Coding Assistant</title>
+    <style>
+        /* --- Color Palette & Variables --- */
+        :root {
+            /* Background & Base */
+            --color-background: #1e212b; /* Dark Slate/Charcoal */
+            --color-surface: #282c36; /* Slightly lighter card background */
+            
+            /* Text & Accent */
+            --color-text-primary: #e0e0e0; /* Light Gray for main text */
+            --color-text-secondary: #a0a0c0; /* Softer gray for details */
+            
+            /* Pastel Accents */
+            --color-accent-lavender: #c9b0e0; /* Soft Lavender */
+            --color-accent-sage: #a8d1b1; /* Soft Sage Green */
+            --color-accent-rose: #e0b0c5; /* Dusty Rose */
+            
+            /* Border/Hover */
+            --color-border: #3a3e4a;
+        }
+
+        /* --- Global Styles & Reset --- */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+            background-color: var(--color-background);
+            color: var(--color-text-primary);
+            line-height: 1.6;
+            scroll-behavior: smooth;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 0;
+        }
+
+        /* --- Typography & Headings --- */
+        h1, h2 {
+            font-weight: 600;
+            margin-bottom: 0.5em;
+            line-height: 1.1;
+        }
+
+        h1 {
+            font-size: 3.5rem;
+            font-weight: 700;
+        }
+
+        h2 {
+            font-size: 2.5rem;
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+        
+        p {
+            margin-bottom: 1.2rem;
+        }
+
+        /* --- Layout Components --- */
+        section {
+            padding: 80px 0;
+        }
+
+        /* Hero Section */
+        #hero {
+            text-align: center;
+            padding: 120px 0;
+            background-color: var(--color-surface);
+            border-bottom: 1px solid var(--color-border);
+        }
+
+        #hero h1 {
+            font-size: 4rem;
+            background: linear-gradient(45deg, var(--color-accent-lavender) 0%, var(--color-accent-sage) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: block;
+            margin-bottom: 15px;
+        }
+
+        #hero p {
+            font-size: 1.3rem;
+            max-width: 700px;
+            margin: 0 auto 30px auto;
+            color: var(--color-text-secondary);
+        }
+
+        /* Agent Roles Section */
+        #roles {
+            background-color: var(--color-background);
+        }
+
+        .roles-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+            margin-top: 40px;
+        }
+
+        .role-card {
+            background-color: var(--color-surface);
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+            border-top: 4px solid;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            text-align: center;
+        }
+
+        .role-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        .role-card h3 {
+            font-size: 1.6rem;
+            margin-bottom: 10px;
+            color: var(--color-text-primary);
+        }
+
+        .role-card p {
+            color: var(--color-text-secondary);
+        }
+
+        /* Accent assignment for roles */
+        .role-planner { border-top-color: var(--color-accent-lavender); }
+        .role-implementer { border-top-color: var(--color-accent-sage); }
+        .role-reviewer { border-top-color: var(--color-accent-rose); }
+
+        /* Footer */
+        footer {
+            background-color: #151820; /* Even darker footer */
+            color: var(--color-text-secondary);
+            text-align: center;
+            padding: 30px 0;
+            border-top: 1px solid var(--color-border);
+            font-size: 0.9rem;
+        }
+
+        /* --- Responsiveness --- */
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2.8rem;
+            }
+            h2 {
+                font-size: 2rem;
+            }
+            #hero {
+                padding: 80px 0;
+            }
+            .role-card {
+                padding: 25px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Navigation placeholder (Optional but good practice) -->
+    <header style="padding: 15px 0; text-align: center; border-bottom: 1px solid var(--color-border);">
+        <div style="font-size: 1.5rem; font-weight: bold; color: var(--color-accent-lavender);">Kufu</div>
+    </header>
+
+    <!-- 1. Hero Section -->
+    <section id="hero">
+        <div class="container">
+            <h1>The Local-First Coding Assistant</h1>
+            <p>Kufu brings state-of-the-art AI assistance directly to your machine, ensuring privacy, speed, and absolute control over your code.</p>
+        </div>
+    </section>
+
+    <!-- 2. Agent Roles Section -->
+    <section id="roles">
+        <div class="container">
+            <h2>The Three Pillars of Development</h2>
+            <p style="text-align: center; max-width: 800px; margin: 0 auto 40px auto; color: var(--color-text-secondary);">
+                Kufu operates using a specialized triad of AI agents, each responsible for a critical stage of the development lifecycle, ensuring comprehensive code quality.
+            </p>
+            
+            <div class="roles-grid">
+                
+                <!-- Planner Role Card -->
+                <article class="role-card role-planner">
+                    <h3 style="color: var(--color-accent-lavender);">🧠 Planner</h3>
+                    <p>Defines the architectural blueprint. This agent takes high-level goals and breaks them down into sequential, manageable, and testable technical tasks. It structures the entire project workflow.</p>
+                </article>
+                
+                <!-- Implementer Role Card -->
+                <article class="role-card role-implementer">
+                    <h3 style="color: var(--color-accent-sage);">🛠️ Implementer</h3>
+                    <p>Writes the actual code based on the plan. It focuses on generating clean, functional, and idiomatic code blocks for each defined step, keeping the local context fresh.</p>
+                </article>
+                
+                <!-- Reviewer Role Card -->
+                <article class="role-card role-reviewer">
+                    <h3 style="color: var(--color-accent-rose);">🧐 Reviewer</h3>
+                    <p>Acts as the critical pair programmer. It rigorously checks all generated code for bugs, security vulnerabilities, adherence to best practices, and performance bottlenecks.</p>
+                </article>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <p>&copy; 2024 Kufu AI. An open-source, local-first coding assistant. | Built with passion for privacy.</p>
+        </div>
+    </footer>
+
+</body>
+</html>
+```

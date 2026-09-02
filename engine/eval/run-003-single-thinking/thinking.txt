@@ -1,0 +1,23 @@
+Here's a plan to meet the requirements:
+1.  **HTML Structure:** Set up the basic semantic structure (Header/Hero, Main Content Sections, Footer).
+2.  **CSS Styling (Embedded):** Define the global styles, color palette, and typography. Implement the dark mode matte aesthetic.
+3.  **Layout Implementation:** Use Flexbox/Grid for responsiveness and section arrangement.
+4.  **Content Filling:** Add the required sections (Hero, Agent Roles, Footer) with persuasive copy.
+5.  **Refinement:** Ensure responsiveness (media queries) and accessibility (semantic elements).
+
+Constraint Checklist & Verification:
+* [x] Single HTML file.
+* [x] Embedded CSS (`<style>`).
+* [x] No external stylesheets/scripts.
+* [x] Modern, clean tech aesthetic.
+* [x] Dark mode (slate/charcoal background).
+* [x] Soft pastel accents (lavender, sage green, dusty rose).
+* [x] Hero section (Title, Subtitle).
+* [x] Agent Roles section (Planner, Implementer, Reviewer descriptions).
+* [x] Simple footer.
+* [x] Semantic HTML5.
+* [x] Flexbox/Grid for layout.
+* [x] Fully responsive.
+* [x] No JavaScript required.
+
+Let's start building the code.

@@ -1,0 +1,215 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Kufu - Local Multi-Agent Coding</title>
+    <style>
+      /* Soft Matte Dark Mode Layout for Testing */
+      body {
+        background-color: #1e1e24;
+        color: #cdd6f4;
+        font-family: sans-serif;
+        margin: 0;
+        padding: 0; /* Removed padding from body to let structure handle margins */
+        line-height: 1.6;
+      }
+
+      /* Global container styling to mimic the centered content area */
+      .container {
+        max-width: 900px; /* Slightly wider for better flow */
+        margin: 0 auto;
+        padding: 20px;
+      }
+
+      header {
+        text-align: center;
+        padding: 40px 20px 30px; /* More vertical space for hero feel */
+      }
+
+      header h1 {
+        color: #b4befe; /* Muted pastel lavender */
+        font-size: 3rem; /* Larger hero title */
+        margin-bottom: 10px;
+      }
+
+      header p {
+        color: #a6adc8;
+        font-style: italic;
+        font-size: 1.2rem;
+      }
+
+      section {
+        padding: 60px 0;
+        border-bottom: 1px solid #282833; /* Separator between major sections */
+      }
+
+      section:last-child {
+        border-bottom: none; /* Footer handles separation */
+      }
+
+      h2 {
+        color: #f5e0dc; /* Muted rosewater */
+        border-bottom: 2px solid #313244;
+        padding-bottom: 10px;
+        margin-bottom: 30px;
+        font-size: 2rem;
+      }
+
+      /* Intro Section Specifics */
+      .intro p {
+        max-width: 700px;
+        font-size: 1.1rem;
+      }
+
+      /* Roles Section Specifics */
+      .roles-content {
+        display: flex;
+        gap: 20px;
+        flex-wrap: wrap;
+        margin-top: 20px;
+      }
+
+      .card {
+        background-color: #282833;
+        padding: 25px;
+        border-radius: 10px;
+        flex: 1 1 280px; /* Allows flexible sizing but minimum width */
+        border: 1px solid #45475a;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        transition: transform 0.2s;
+      }
+      
+      .card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
+      }
+
+      .card h3 {
+        color: #89b4fa; /* Muted pastel blue */
+        margin-top: 0;
+        font-size: 1.4rem;
+      }
+
+      /* Terminal/Code Section Specifics */
+      .terminal {
+        background-color: #21212c; /* Slightly darker background for the terminal feel */
+        padding: 40px 0;
+        text-align: center;
+      }
+      
+      .terminal h2 {
+          color: #f5e0dc;
+          border-bottom: none;
+          margin-bottom: 20px;
+      }
+
+      pre {
+        background-color: #11111b;
+        padding: 20px;
+        border-radius: 8px;
+        overflow-x: auto;
+        border-left: 5px solid #a6e3a1; /* More pronounced indicator */
+        text-align: left;
+        margin: 0 auto;
+        display: block;
+        max-width: 90%;
+      }
+
+      code {
+        font-family: 'Consolas', 'Monaco', monospace;
+        color: #a6e3a1;
+        font-size: 0.95rem;
+      }
+
+      /* Footer */
+      footer {
+        text-align: center;
+        padding: 20px;
+        border-top: 1px solid #282833;
+        color: #585b70;
+        font-size: 0.9rem;
+      }
+
+      /* Responsive Adjustments */
+      @media (min-width: 768px) {
+        .roles-content {
+            flex-direction: row;
+        }
+        .card {
+            flex: 1 1 30%; /* More distinct columns on desktop */
+        }
+      }
+      
+      @media (max-width: 600px) {
+        header h1 {
+            font-size: 2.5rem;
+        }
+        .card {
+            flex: 1 1 100%; /* Full width stack on small screens */
+        }
+        body {
+            padding: 10px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1 class="logo">Kufu</h1>
+      <p>Small models. Strict responsibilities. Real results.</p>
+    </header>
+
+    <div class="container">
+      
+      <section class="intro">
+        <h2>What is Kufu?</h2>
+        <p>
+          Kufu is an experimental coding assistant exploring whether multiple 
+          constrained local language models can cooperate to perform small 
+          software tasks effectively. By dividing labor among specialized 
+          agents, we aim for reliable, verifiable, and high-quality code generation.
+        </p>
+      </section>
+
+      <section class="roles">
+        <h2>The Agents: A Collaborative Pipeline</h2>
+        <div class="roles-content">
+          <div class="card">
+            <h3>🤖 Planner</h3>
+            <p>
+              The architect. Determines the overall goal and breaks it down into 
+              structured, manageable sub-tasks. The Planner never writes any code; 
+              it only manages the plan.
+            </p>
+          </div>
+          <div class="card">
+            <h3>💻 Implementer</h3>
+            <p>
+              The coder. Takes explicit tasks from the Planner and modifies or 
+              writes the actual code based on specifications. It never dictates 
+              the next steps.
+            </p>
+          </div>
+          <div class="card">
+            <h3>✅ Reviewer</h3>
+            <p>
+              The quality gate. It validates the implemented code against the original 
+              plan and requirements, ensuring correctness and compliance. It never 
+              rewrites or plans changes itself.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section class="terminal">
+        <h2>System Event Log</h2>
+        <pre><code>{"event": "PIPELINE_INITIATED", "status": "success", "message": "Awaiting Planner directive..."}</code></pre>
+      </section>
+    </div>
+
+    <footer>
+      <p>Kufu Project &copy; 2026 | Designed for constrained, reliable LLM workflows.</p>
+    </footer>
+  </body>
+</html>

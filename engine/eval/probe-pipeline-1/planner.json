@@ -1,0 +1,10 @@
+{
+  "task": "Create a single, fully responsive HTML file using semantic HTML5 and embedded CSS, featuring a modern, dark-mode, tech-aesthetic landing page for Kufu, including a hero section, a dedicated section explaining the Planner, Implementer, and Reviewer agent roles, and a simple footer.",
+  "preferredOutcome": "index.html",
+  "requiredFiles": [
+    "index.html",
+    "styles.css"
+  ],
+  "action": "CREATE",
+  "thinking": ""
+}

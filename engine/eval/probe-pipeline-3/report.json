@@ -1,0 +1,23 @@
+{
+  "mode": "pipeline",
+  "model": "gemma4:e4b",
+  "num_ctx": 8192,
+  "prompt_file": "C:\\Users\\aroml\\Kufu\\engine\\eval\\simple-prompt.md",
+  "steps": [
+    {
+      "name": "planner",
+      "in_tokens": 518,
+      "out_tokens": 93,
+      "duration_ms": 12543
+    },
+    {
+      "name": "implementer",
+      "in_tokens": 1361,
+      "out_tokens": 1767,
+      "duration_ms": 29671
+    }
+  ],
+  "total_in_tokens": 1879,
+  "total_out_tokens": 1860,
+  "total_duration_ms": 42268
+}

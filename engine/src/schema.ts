@@ -49,7 +49,7 @@ export function plannerTaskJsonSchema(): Record<string, unknown> {
         type: "array",
         items: { type: "string" },
         description:
-          "Files the implementer must see. These must exist in the repository.",
+          "Files the implementer must read. These must exist in the repository.",
       },
       action: {
         type: "string",

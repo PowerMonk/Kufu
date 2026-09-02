@@ -1,0 +1,240 @@
+Here is the complete, single-file HTML landing page for Kufu.
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kufu: Your Open-Source Local-First Coding Assistant</title>
+    <style>
+        /* --- Color Palette & Global Styles --- */
+        :root {
+            --color-bg: #1a1a2e; /* Deep Slate/Charcoal */
+            --color-text-primary: #e0e0e0; /* Light Gray/Off-White */
+            --color-accent-lavender: #c7b4e5; /* Soft Lavender */
+            --color-accent-sage: #a4c69a; /* Sage Green */
+            --color-accent-rose: #d4a6b8; /* Dusty Rose */
+            --color-card-bg: #232a40; /* Slightly Lighter Slate for contrast */
+            --color-border: #3a3f5c;
+        }
+
+        /* --- Base Styles --- */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--color-bg);
+            color: var(--color-text-primary);
+            line-height: 1.6;
+            scroll-behavior: smooth;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* --- Typography & Headings --- */
+        h1, h2, h3 {
+            font-weight: 700;
+            margin-bottom: 0.5em;
+        }
+
+        h1 {
+            font-size: 3.2rem;
+        }
+
+        h2 {
+            font-size: 2.5rem;
+            text-align: center;
+            margin-bottom: 1.2em;
+        }
+
+        /* --- Section Styling --- */
+        section {
+            padding: 80px 0;
+        }
+
+        /* --- Hero Section --- */
+        #hero {
+            background-color: #1e223a; /* Slightly darker background for separation */
+            padding: 120px 0;
+            text-align: center;
+        }
+
+        #hero h1 {
+            font-size: 4rem;
+            margin-bottom: 0.2em;
+            background-gradient: linear-gradient(90deg, var(--color-accent-lavender) 0%, var(--color-accent-sage) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: inline-block;
+        }
+
+        #hero p {
+            font-size: 1.35rem;
+            max-width: 700px;
+            margin: 20px auto 30px auto;
+            color: #b0b0c0;
+        }
+
+        .cta-button {
+            display: inline-block;
+            padding: 14px 35px;
+            background-color: var(--color-accent-lavender);
+            color: var(--color-bg);
+            text-decoration: none;
+            border-radius: 30px;
+            font-weight: 600;
+            transition: background-color 0.3s, transform 0.2s;
+            box-shadow: 0 4px 15px rgba(199, 180, 229, 0.4);
+            border: none;
+            cursor: pointer;
+        }
+
+        .cta-button:hover {
+            background-color: #9e8ab8; /* Slightly darker lavender on hover */
+            transform: translateY(-2px);
+        }
+
+        /* --- Agent Roles Section --- */
+        #agents {
+            background-color: var(--color-card-bg);
+        }
+
+        .agent-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-top: 40px;
+        }
+
+        .agent-card {
+            background-color: var(--color-bg);
+            padding: 30px;
+            border-radius: 12px;
+            border-left: 5px solid;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+            transition: transform 0.3s;
+        }
+
+        .agent-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4);
+        }
+
+        .agent-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+        }
+
+        .planner { border-left-color: var(--color-accent-lavender); }
+        .implementer { border-left-color: var(--color-accent-sage); }
+        .reviewer { border-left-color: var(--color-accent-rose); }
+
+        .agent-card p {
+            color: #b0b0c0;
+        }
+
+        /* --- Footer --- */
+        footer {
+            background-color: #121222; /* Even darker footer */
+            padding: 30px 0;
+            text-align: center;
+            border-top: 1px solid var(--color-border);
+        }
+
+        footer p {
+            margin: 0;
+            color: #777;
+        }
+
+        /* --- Responsiveness --- */
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2.8rem;
+            }
+
+            h2 {
+                font-size: 2rem;
+            }
+
+            #hero {
+                padding: 80px 0;
+            }
+
+            #hero p {
+                font-size: 1.1rem;
+            }
+
+            .agent-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 1. Hero Section -->
+    <header id="hero">
+        <div class="container">
+            <h1>Kufu</h1>
+            <p>The open-source, local-first coding assistant that thinks like a full development team.</p>
+            <a href="#agents" class="cta-button">Explore Core Agents</a>
+        </div>
+    </header>
+
+    <!-- 2. Agent Roles Section -->
+    <section id="agents">
+        <div class="container">
+            <h2>The Core Intelligence: Specialized Agents</h2>
+            <p style="text-align: center; max-width: 800px; margin: -10px auto 40px auto; color: #a0a0c0;">Kufu doesn't use a single monolithic model. It orchestrates specialized, role-based agents to handle complex development workflows.</p>
+
+            <div class="agent-grid">
+                
+                <!-- Planner Agent -->
+                <article class="agent-card planner">
+                    <h3 style="color: var(--color-accent-lavender);">🧠 The Planner</h3>
+                    <p>Defines the scope. The Planner takes a high-level goal and breaks it down into granular, actionable, and sequential engineering tasks. It creates the map before writing the first line of code.</p>
+                </article>
+
+                <!-- Implementer Agent -->
+                <article class="agent-card implementer">
+                    <h3 style="color: var(--color-accent-sage);">💻 The Implementer</h3>
+                    <p>The code factory. This agent executes the plan, writing, refactoring, and filling out the code for each task using the most appropriate language context available locally.</p>
+                </article>
+
+                <!-- Reviewer Agent -->
+                <article class="agent-card reviewer">
+                    <h3 style="color: var(--color-accent-rose);">🧐 The Reviewer</h3>
+                    <p>The quality gate. Before completion, the Reviewer critically analyzes the code for bugs, performance issues, security vulnerabilities, and adherence to best practices.</p>
+                </article>
+            </div>
+        </div>
+    </section>
+
+    <!-- 3. Placeholder Section (Optional Detail/Value Prop) -->
+    <section id="local-first">
+        <div class="container" style="text-align: center;">
+            <h2 style="color: var(--color-accent-sage);">Built for Privacy. Built for Power.</h2>
+            <p style="font-size: 1.2rem; max-width: 800px; margin: 0 auto 20px auto; color: #c0c0d0;">Because your source code belongs only to you, Kufu processes and stores everything locally. Unmatched power without the cloud risk.</p>
+        </div>
+    </section>
+
+
+    <!-- 4. Footer -->
+    <footer>
+        <div class="container">
+            <p>&copy; 2024 Kufu. Open-Source. Local-First.</p>
+        </div>
+    </footer>
+
+</body>
+</html>
+```

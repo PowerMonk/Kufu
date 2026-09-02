@@ -1,0 +1,17 @@
+{
+  "mode": "single",
+  "model": "gemma4:e4b",
+  "num_ctx": 8192,
+  "prompt_file": "C:\\Users\\aroml\\Kufu\\engine\\eval\\simple-prompt.md",
+  "steps": [
+    {
+      "name": "single",
+      "in_tokens": 171,
+      "out_tokens": 2479,
+      "duration_ms": 51622
+    }
+  ],
+  "total_in_tokens": 171,
+  "total_out_tokens": 2479,
+  "total_duration_ms": 51677
+}

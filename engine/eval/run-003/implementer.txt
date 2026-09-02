@@ -1,0 +1,262 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Kufu - Local Multi-Agent Coding</title>
+    <style>
+      /* Root styles and Dark Mode Setup */
+      :root {
+        /* Backgrounds */
+        --bg-primary: #1e1e24; /* Slate/Charcoal */
+        --bg-secondary: #282833; /* Slightly lighter card background */
+        --bg-darkest: #11111b; /* Terminal background */
+        /* Text Colors */
+        --text-primary: #cdd6f4; /* Light default text */
+        --text-muted: #a6adc8; /* Muted secondary text */
+        /* Accents */
+        --accent-lavender: #b4befe; /* Lavender for main headers/highlights */
+        --accent-sage: #a6e3a1; /* Sage Green for code/success */
+        --accent-rose: #f5e0dc; /* Dusty Rose for section titles */
+        --accent-blue: #89b4fa; /* Muted Pastel Blue for subheadings */
+        --border-color: #313244;
+      }
+
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      html {
+        scroll-behavior: smooth;
+      }
+
+      body {
+        background-color: var(--bg-primary);
+        color: var(--text-primary);
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+        line-height: 1.6;
+        padding: 20px;
+      }
+
+      /* Layout Containers */
+      header,
+      main,
+      footer {
+        max-width: 1000px;
+        margin: 0 auto;
+        padding: 20px 0;
+      }
+
+      /* Header Styling */
+      header {
+        text-align: center;
+        padding-bottom: 30px;
+        border-bottom: 1px solid #3c3c52;
+      }
+      header h1 {
+        color: var(--accent-lavender);
+        font-size: 3rem;
+        margin-bottom: 10px;
+        letter-spacing: 2px;
+      }
+      header p {
+        color: var(--text-muted);
+        font-style: italic;
+        font-size: 1.1rem;
+      }
+
+      /* Section Styling */
+      section {
+        padding: 60px 0;
+        margin-bottom: 20px;
+        border-bottom: 1px solid #2a2a40;
+      }
+      section:last-child {
+        border-bottom: none;
+      }
+
+      h2 {
+        color: var(--accent-rose);
+        font-size: 2.2rem;
+        margin-bottom: 20px;
+        padding-bottom: 10px;
+        position: relative;
+      }
+      /* Underline effect for H2 */
+      h2::after {
+        content: '';
+        display: block;
+        width: 50px;
+        height: 3px;
+        background-color: rgba(245, 224, 220, 0.5); /* Soft rose underline */
+        margin-top: 5px;
+      }
+
+      /* Introduction Section */
+      .intro p {
+        max-width: 700px;
+        font-size: 1.1rem;
+        color: var(--text-primary);
+      }
+
+      /* Agent Roles Section */
+      .roles {
+        text-align: center;
+      }
+      .card-container {
+        display: flex;
+        gap: 20px;
+        flex-wrap: wrap;
+        justify-content: center;
+        margin-top: 30px;
+      }
+
+      .card {
+        background-color: var(--bg-secondary);
+        padding: 25px;
+        border-radius: 10px;
+        flex: 1;
+        min-width: 280px;
+        max-width: 350px;
+        border: 1px solid #45475a;
+        transition: transform 0.3s, box-shadow 0.3s;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+      }
+
+      .card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 20px rgba(180, 190, 238, 0.15); /* Subtle hover lift with lavender tint */
+      }
+
+      .card h3 {
+        color: var(--accent-blue);
+        font-size: 1.5rem;
+        margin-top: 0;
+        margin-bottom: 10px;
+      }
+      .card p {
+        color: var(--text-muted);
+      }
+
+      /* Terminal/Code Output Section */
+      .terminal {
+        background-color: #20202c; /* Slightly different dark background for contrast */
+        padding: 30px;
+        border-radius: 10px;
+        border: 1px solid #3c3c52;
+      }
+
+      .terminal h2 {
+        color: var(--accent-rose);
+        margin-bottom: 15px;
+      }
+      
+      pre {
+        background-color: var(--bg-darkest);
+        padding: 20px;
+        border-radius: 8px;
+        overflow-x: auto;
+        border-left: 5px solid var(--accent-sage); /* Stronger accent line */
+        color: var(--accent-sage);
+        font-family: "Courier New", monospace;
+        font-size: 0.95rem;
+        margin-top: 15px;
+      }
+
+      code {
+        /* No specific code styling needed here, pre handles the main block */
+      }
+
+      /* Footer Styling */
+      footer {
+        text-align: center;
+        color: #585b70;
+        font-size: 1rem;
+        padding-top: 40px;
+        border-top: 1px solid #2a2a40;
+      }
+
+      /* Responsiveness */
+      @media (max-width: 768px) {
+        body {
+          padding: 15px;
+        }
+        header h1 {
+          font-size: 2.5rem;
+        }
+        .card-container {
+          flex-direction: column;
+          align-items: center;
+        }
+        .card {
+          max-width: 90%;
+          width: 100%;
+          text-align: center;
+        }
+        .card:hover {
+          transform: none;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>Kufu</h1>
+      <p>Small models. Strict responsibilities. Real results.</p>
+    </header>
+
+    <main>
+      <section class="intro">
+        <h2>What is Kufu?</h2>
+        <p>
+          An experimental coding assistant exploring whether multiple
+          constrained local language models can cooperate to perform small
+          software tasks effectively. The system divides the work into specialized,
+          non-overlapping roles to enforce rigor and reliability.
+        </p>
+      </section>
+
+      <section class="roles">
+        <h2>The Agents</h2>
+        <div class="card-container">
+          <article class="card">
+            <h3>Planner</h3>
+            <p>
+              Decides what should happen and creates structured tasks. The Planner
+              maintains the high-level goal and breaks it down into actionable steps.
+              <em>Never writes executable code.</em>
+            </p>
+          </article>
+          <article class="card">
+            <h3>Implementer</h3>
+            <p>
+              Receives specific tasks and modifies the existing codebase to fulfill them.
+              This agent focuses purely on syntax, function, and structural integrity.
+              <em>Never creates the plan or decides the goal.</em>
+            </p>
+          </article>
+          <article class="card">
+            <h3>Reviewer</h3>
+            <p>
+              Validates if the implemented code meets the original plan's requirements.
+              It tests, verifies, and flags discrepancies.
+              <em>Never rewrites or proposes new logic.</em>
+            </p>
+          </article>
+        </div>
+      </section>
+
+      <section class="terminal">
+        <h2>System Events</h2>
+        <p>A successful execution pipeline yields predictable, verifiable output:</p>
+        <pre><code>{"event": "PIPELINE_COMPLETED", "status": "success", "metrics": {"steps": 3, "time_ms": 124}}</code></pre>
+      </section>
+    </main>
+
+    <footer>
+      <p>Kufu Project &copy; 2026 | Driven by constrained AI collaboration.</p>
+    </footer>
+  </body>
+</html>
