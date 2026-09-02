@@ -1,0 +1,13 @@
+run_id    : single
+model     : gemma4:e4b
+num_ctx   : 8192
+started   : 2026-09-02T15:20:42.429Z
+
+step           call  in_tok  out_tok    total  prev_sat   new_sat   cum_in   cum_out   cum_tot      vram
+single            1     171     2479     2650      0.0%      2.1%      171      2479      2650    3.01GB
+
+saturation_peak : 2.1%
+total_in_tokens  : 171
+total_out_tokens : 2479
+total_tokens     : 2650
+vram_peak        : 3.01GB

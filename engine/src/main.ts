@@ -10,8 +10,9 @@
 
 import { readFile } from "node:fs/promises";
 import { resolve } from "node:path";
+import { ZodError } from "zod";
 
-import chat from "./ollama.ts";
+import chat, { unloadModel } from "./ollama.ts";
 import { runPipeline } from "./pipeline.ts";
 import { runSingle } from "./single.ts";
 import { renderReport } from "./benchmark.ts";
@@ -25,6 +26,7 @@ interface Args {
   repo?: string;
   out: string;
   thinking?: boolean;
+  seed?: number;
 }
 
 function parseArgs(argv: string[]): Args {
@@ -39,7 +41,7 @@ function parseArgs(argv: string[]): Args {
   while (i < args.length) {
     const key = args[i];
     if (!key.startsWith("--")) usage();
-    
+
     // Check if this is a boolean flag (no value, or next arg is another flag)
     const nextArg = args[i + 1];
     if (nextArg === undefined || nextArg.startsWith("--")) {
@@ -77,7 +79,7 @@ function parseArgs(argv: string[]): Args {
   if (subcommand === "pipeline" && !result.repo) {
     throw new Error("--repo is required for the pipeline subcommand");
   }
-  
+
   // Handle --thinking flag (boolean, only for single subcommand)
   const thinking = map.get("--thinking");
   if (thinking === true) {
@@ -86,15 +88,26 @@ function parseArgs(argv: string[]): Args {
     }
     result.thinking = true;
   }
-  
+
+  // Handle --seed flag (optional integer). When provided, every chat
+  // call gets the same seed so the run is reproducible across invocations.
+  const seed = map.get("--seed");
+  if (seed !== undefined) {
+    const n = Number(seed);
+    if (!Number.isFinite(n)) {
+      throw new Error(`--seed must be an integer, got ${seed}`);
+    }
+    result.seed = n;
+  }
+
   return result;
 }
 
 function usage(): never {
   console.error(
     "Usage:\n" +
-      "  bun run src/main.ts run pipeline --model M --num-ctx N --repo R --prompt P --out O\n" +
-      "  bun run src/main.ts run single   --model M --num-ctx N --prompt P --out O [--thinking]",
+      "  bun run src/main.ts run pipeline --model M --num-ctx N --repo R --prompt P --out O [--seed S]\n" +
+      "  bun run src/main.ts run single   --model M --num-ctx N --prompt P --out O [--thinking] [--seed S]",
   );
   process.exit(2);
 }
@@ -106,6 +119,19 @@ async function main(): Promise<void> {
   const promptText = await readFile(promptPath, "utf8");
   const promptFile = promptPath;
 
+  // Wrap the inner chat() so every LLM call passes keep_alive: -1 and,
+  // optionally, a fixed seed. keep_alive: -1 pins the model in VRAM
+  // for the whole run instead of letting Ollama's 5-minute timer kick
+  // in between the planner and implementer. seed (when provided via
+  // --seed) makes outputs reproducible across runs. We unload
+  // explicitly at the end of main() below.
+  const persistentChat: typeof chat = (req) =>
+    chat({
+      ...req,
+      keep_alive: -1,
+      ...(args.seed !== undefined ? { seed: args.seed } : {}),
+    });
+
   if (args.subcommand === "single") {
     const { record } = await runSingle({
       model: args.model,
@@ -113,7 +139,7 @@ async function main(): Promise<void> {
       promptText,
       promptFile,
       outDir: args.out,
-      chat,
+      chat: persistentChat,
       thinking: args.thinking,
     });
     console.log(renderReport(record));
@@ -125,13 +151,29 @@ async function main(): Promise<void> {
       promptText,
       promptFile,
       outDir: args.out,
-      chat,
+      chat: persistentChat,
     });
     console.log(renderReport(record));
+  }
+
+  // Free VRAM. Best-effort: if unload fails (e.g. Ollama already shut
+  // down) the run still succeeded, so we swallow the error.
+  try {
+    await unloadModel(args.model);
+  } catch (err) {
+    console.error(`[main] unload failed (ignored): ${(err as Error).message}`);
   }
 }
 
 main().catch((err) => {
-  console.error(err.stack ?? err.message ?? String(err));
+  if (err instanceof ZodError) {
+    console.error("Schema validation failed:");
+    console.error(JSON.stringify(err.issues, null, 2));
+    console.error(
+      "If --out was set, see <outDir>/planner.failed.json for the raw model output.",
+    );
+  } else {
+    console.error(err.stack ?? err.message ?? String(err));
+  }
   process.exit(1);
 });

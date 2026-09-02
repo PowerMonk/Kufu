@@ -1,5 +1,8 @@
 // planner.ts - Runs the planner agent and returns a validated PlannerTask.
 
+import { mkdir, writeFile } from "node:fs/promises";
+import { join } from "node:path";
+
 import defaultChat from "./ollama.ts";
 import { PlannerTaskSchema, plannerTaskJsonSchema } from "./schema.ts";
 import { buildPlannerSystemPrompt, buildPlannerUserPrompt } from "./prompts.ts";
@@ -12,6 +15,11 @@ import type { OllamaChatResult } from "./types.ts";
  * planner asks for a file in `requiredFiles` that doesn't appear in
  * `availableFiles`.
  *
+ * If `outDir` is provided and Zod rejects the model's output, we dump
+ * the raw response + structured issues to `outDir/planner.failed.json`
+ * before re-throwing. This is the diagnostic safety net: without it,
+ * a schema failure leaves us with nothing to inspect.
+ *
  * `chat` is dependency-injected so tests can stub it. The default is
  * the real Ollama client.
  */
@@ -20,6 +28,7 @@ export async function runPlanner(args: {
   num_ctx: number;
   userRequest: string;
   availableFiles: string[];
+  outDir?: string;
   chat?: typeof defaultChat;
 }): Promise<{ task: PlannerTask; result: OllamaChatResult }> {
   const chat = args.chat ?? defaultChat;
@@ -40,7 +49,14 @@ export async function runPlanner(args: {
   });
 
   const parsed = parsePlannerContent(result.content);
-  const task = PlannerTaskSchema.parse(parsed);
+
+  let task: PlannerTask;
+  try {
+    task = PlannerTaskSchema.parse(parsed);
+  } catch (err) {
+    await dumpFailedPlannerOutput(args, result, err);
+    throw err;
+  }
 
   // Defensive check: requiredFiles must be a subset of availableFiles.
   // The system prompt says this, but models slip. Fail loud.
@@ -54,6 +70,51 @@ export async function runPlanner(args: {
   }
 
   return { task, result };
+}
+
+/**
+ * Writes the planner's raw output and Zod issues to `outDir/planner.failed.json`.
+ * Best-effort: if the write fails (bad path, permission error), we log to
+ * stderr but don't mask the original Zod error.
+ */
+async function dumpFailedPlannerOutput(
+  args: {
+    model: string;
+    num_ctx: number;
+    outDir?: string;
+  },
+  result: OllamaChatResult,
+  err: unknown,
+): Promise<void> {
+  if (!args.outDir) return;
+
+  const issues = err instanceof Error && "issues" in err
+    ? (err as unknown as { issues: unknown }).issues
+    : null;
+
+  const dump = {
+    raw_content: result.content,
+    thinking: result.thinking,
+    issues,
+    model: args.model,
+    num_ctx: args.num_ctx,
+    prompt_eval_count: result.prompt_eval_count,
+    eval_count: result.eval_count,
+    timestamp: new Date().toISOString(),
+  };
+
+  try {
+    await mkdir(args.outDir, { recursive: true });
+    await writeFile(
+      join(args.outDir, "planner.failed.json"),
+      JSON.stringify(dump, null, 2),
+      "utf8",
+    );
+  } catch (writeErr) {
+    console.error(
+      `[planner] failed to write planner.failed.json: ${(writeErr as Error).message}`,
+    );
+  }
 }
 
 /**

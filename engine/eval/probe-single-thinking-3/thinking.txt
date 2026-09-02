@@ -1,0 +1,12 @@
+Here's a plan to build the requested landing page:
+
+1.  **Goal:** Landing page for Kufu (open-source, local-first coding assistant).
+2.  **Format:** Single HTML file, embedded CSS (`<style>`). No external files/scripts.
+3.  **Aesthetic:** Dark mode (slate/charcoal base), Modern Tech, Matte colors (Lavender, Sage Green, Dusty Rose) for accents.
+4.  **Structure:**
+    *   Header/Hero (Catchy title, subtitle, CTA placeholder).
+    *   Agent Roles Section (Planner, Implementer, Reviewer - descriptive cards).
+    *   Footer (Simple attribution).
+5.  **Technical:** Semantic HTML5, Responsive (Media Queries), CSS layout (Flexbox/Grid).
+
+*(Self-Correction/Refinement during drafting: I need to make sure the chosen matte colors feel sophisticated and don't clash harshly on a dark background. I will use soft opacity and subtle transitions/borders to achieve the 'matte' feel.)*

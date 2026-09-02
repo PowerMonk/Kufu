@@ -28,9 +28,14 @@ export function buildPlannerSystemPrompt(): string {
     "  - requiredFiles is exhaustive. The implementer will NOT be given any other file.",
     "  - preferredOutcome MAY be a brand-new file (use action CREATE).",
     "  - Prefer CREATE for new functionality, UPDATE for small changes, DELETE sparingly.",
-    "  - `task` describes what preferredOutcome should become or contain.",
+    "  - `task` is OBLIGATORY. Your JSON output is invalid without it.",
+    "    `task` describes what preferredOutcome should become or contain.",
+    "    It must be a concrete, descriptive sentence (20+ words is a good target).",
     "    Do not repeat the action verb. Good: 'A landing page with a hero section,",
     "    an agents section, embedded CSS, and a footer.' Bad: 'UPDATE'. Bad: 'Modify index.html'.",
+    "    Bad (also rejected): an empty string or missing field.",
+    "  - Your JSON output MUST contain ALL FOUR fields: task, preferredOutcome,",
+    "    requiredFiles, action. Omitting any field invalidates your response.",
     "  - Respond as a single JSON object matching the schema. No prose, no markdown fences.",
   ].join("\n");
 }

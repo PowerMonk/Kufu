@@ -1,0 +1,291 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kufu - Open-Source Local-First Coding Assistant</title>
+    <style>
+        /* ------------------------------------ */
+        /* 1. CSS Variables and Global Reset */
+        /* ------------------------------------ */
+
+        :root {
+            /* Core Colors */
+            --color-bg-dark: #1f2937; /* Slate/Charcoal Background */
+            --color-text-light: #e5e7eb; /* Off-white/Light Gray */
+            --color-accent-lavender: #c0b8ef; /* Soft Lavender */
+            --color-accent-sage: #a7c49e; /* Sage Green */
+            --color-accent-rose: #d89baf; /* Dusty Rose */
+            --color-border: #374151;
+            --color-background-section: #111827; /* Slightly darker for depth */
+
+            /* Typography */
+            --font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: var(--font-family);
+            background-color: var(--color-bg-dark);
+            color: var(--color-text-light);
+            line-height: 1.6;
+            scroll-behavior: smooth;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* ------------------------------------ */
+        /* 2. Typography & Utility */
+        /* ------------------------------------ */
+
+        h1, h2, h3 {
+            margin-bottom: 1rem;
+            font-weight: 700;
+        }
+
+        h1 {
+            font-size: 3rem;
+            line-height: 1.1;
+            color: var(--color-accent-lavender);
+        }
+
+        h2 {
+            font-size: 2.5rem;
+            margin-bottom: 2rem;
+            padding-top: 40px; /* Space after previous section */
+            text-align: center;
+            color: var(--color-text-light);
+        }
+
+        .text-center {
+            text-align: center;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 12px 30px;
+            background-color: var(--color-accent-lavender);
+            color: var(--color-bg-dark);
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: background-color 0.3s, transform 0.1s;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn:hover {
+            background-color: #9f8cda; /* Darker lavender on hover */
+            transform: translateY(-2px);
+        }
+
+        /* ------------------------------------ */
+        /* 3. Layout Sections */
+        /* ------------------------------------ */
+
+        /* Hero Section */
+        #hero {
+            padding: 100px 0;
+            text-align: center;
+            background-color: var(--color-bg-dark);
+        }
+
+        #hero p {
+            font-size: 1.25rem;
+            color: #a0aec0;
+            margin-bottom: 30px;
+        }
+
+        /* Role Grid Section */
+        #roles {
+            padding: 80px 0;
+            background-color: var(--color-background-section);
+        }
+
+        .role-grid {
+            display: flex;
+            gap: 30px;
+            justify-content: center;
+            margin-top: 40px;
+            flex-wrap: wrap;
+        }
+
+        .role-card {
+            background-color: var(--color-bg-dark);
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            border-top: 3px solid;
+            transition: transform 0.3s;
+            flex: 1 1 300px; /* Flex basis for responsiveness */
+            min-width: 280px;
+            text-align: left;
+        }
+
+        .role-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .role-card h3 {
+            font-size: 1.6rem;
+            margin-bottom: 10px;
+        }
+
+        /* Coloring the roles */
+        .role-card.planner {
+            border-top-color: var(--color-accent-lavender);
+        }
+        .role-card.planner h3 { color: var(--color-accent-lavender); }
+
+        .role-card.implementer {
+            border-top-color: var(--color-accent-sage);
+        }
+        .role-card.implementer h3 { color: var(--color-accent-sage); }
+
+        .role-card.reviewer {
+            border-top-color: var(--color-accent-rose);
+        }
+        .role-card.reviewer h3 { color: var(--color-accent-rose); }
+
+
+        /* Footer */
+        #footer {
+            padding: 30px 0;
+            margin-top: 50px;
+            border-top: 1px solid var(--color-border);
+            text-align: center;
+            font-size: 0.9rem;
+            color: #9ca3af;
+        }
+
+        /* ------------------------------------ */
+        /* 4. Responsiveness (Media Queries) */
+        /* ------------------------------------ */
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2.5rem;
+            }
+            h2 {
+                font-size: 2rem;
+            }
+            
+            #hero {
+                padding: 80px 0;
+            }
+
+            .role-grid {
+                flex-direction: column;
+                gap: 20px;
+            }
+
+            .role-card {
+                min-width: 100%;
+            }
+        }
+
+        @media (max-width: 480px) {
+            h1 {
+                font-size: 2rem;
+            }
+            .btn {
+                width: 100%;
+                text-align: center;
+            }
+            .container {
+                padding: 0 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header/Navigation (Simple Anchor Menu) -->
+    <header>
+        <div class="container text-center" style="padding: 20px 0;">
+            <h2 style="font-size: 1.5rem; margin-bottom: 10px; color: var(--color-accent-lavender);">Kufu</h2>
+            <p style="font-size: 1rem; color: #9ca3af;">AI-Powered Development. Local and Private.</p>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section id="hero" class="container">
+        <main>
+            <h1>The Next Generation of Coding Assistance.</h1>
+            <p>Kufu is a local-first, open-source coding assistant that treats development like a collaborative team of specialized AI agents.</p>
+            <a href="#roles" class="btn">Explore the Agents →</a>
+        </main>
+    </section>
+
+    <!-- Agent Roles Section -->
+    <section id="roles" class="container">
+        <div class="text-center">
+            <h2>The Kufu Agent Team</h2>
+            <p style="max-width: 800px; margin: 0 auto 40px;">Kufu doesn't rely on a single monolithic AI. Instead, it assigns specialized roles, ensuring quality, planning, and deep review for every feature you build.</p>
+        </div>
+
+        <div class="role-grid">
+            
+            <!-- Planner Role Card -->
+            <article class="role-card planner">
+                <h3 style="color: var(--color-accent-lavender);">🧠 The Planner</h3>
+                <p>The initial blueprint architect. The Planner takes your high-level objective (e.g., "Build a user auth system") and decomposes it into granular, actionable steps, creating a structured plan of attack before a single line of code is written.</p>
+                <ul style="list-style: none; padding: 10px 0; font-size: 0.95rem; color: #a0aec0;">
+                    <li>✅ Requirement Decomposition</li>
+                    <li>🗓️ Task Scheduling</li>
+                    <li>🗺️ Architecture Mapping</li>
+                </ul>
+            </article>
+
+            <!-- Implementer Role Card -->
+            <article class="role-card implementer">
+                <h3 style="color: var(--color-accent-sage);">✍️ The Implementer</h3>
+                <p>The core builder. Armed with the plan, the Implementer writes the actual code. It focuses on clean, efficient, and modular code generation, handling syntax, frameworks, and dependencies in a streamlined manner.</p>
+                 <ul style="list-style: none; padding: 10px 0; font-size: 0.95rem; color: #a0aec0;">
+                    <li>🚀 Code Generation</li>
+                    <li>💾 Local State Management</li>
+                    <li>🧩 Modularity & Integration</li>
+                </ul>
+            </article>
+
+            <!-- Reviewer Role Card -->
+            <article class="role-card reviewer">
+                <h3 style="color: var(--color-accent-rose);">🧐 The Reviewer</h3>
+                <p>The quality assurance specialist. The Reviewer scrutinizes the generated code for potential bugs, security flaws, performance bottlenecks, and adherence to best practices, ensuring robust and maintainable results.</p>
+                <ul style="list-style: none; padding: 10px 0; font-size: 0.95rem; color: #a0aec0;">
+                    <li>🛡️ Security Auditing</li>
+                    <li>🧪 Test Case Generation</li>
+                    <li>✨ Optimization & Refinement</li>
+                </ul>
+            </article>
+        </div>
+    </section>
+
+    <!-- Optional CTA/Feature Section -->
+    <section class="container text-center" style="padding: 60px 0; background-color: var(--color-bg-dark);">
+        <h2 style="margin-bottom: 1rem;">Private. Open. Powerful.</h2>
+        <p style="font-size: 1.1rem; color: #a0aec0; margin-bottom: 30px;">Kufu runs entirely on your machine, keeping your intellectual property private and giving you total control.</p>
+        <a href="#" class="btn" style="background-color: var(--color-accent-sage); color: var(--color-bg-dark);">Get Started Today (Open Source)</a>
+    </section>
+
+    <!-- Footer -->
+    <footer id="footer">
+        <div class="container">
+            <p>&copy; 2024 Kufu Coding Assistant. Built with AI for privacy and power. | <a href="#" style="color: var(--color-accent-lavender); text-decoration: none;">Developers</a></p>
+        </div>
+    </footer>
+
+</body>
+</html>
+```
