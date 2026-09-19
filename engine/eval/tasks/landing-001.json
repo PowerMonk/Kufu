@@ -1,0 +1,13 @@
+{
+  "task_id": "landing-001",
+  "output_kind": "html",
+  "requirements": [
+    { "id": "hero_section", "type": "element", "selector": "header" },
+    { "id": "roles_grid", "type": "count", "selector": "article, .role, .card, .role-card", "min": 3 },
+    { "id": "has_footer", "type": "element", "selector": "footer" },
+    { "id": "mentions_planner", "type": "text", "expected": "Planner" },
+    { "id": "mentions_implementer", "type": "text", "expected": "Implementer" },
+    { "id": "mentions_reviewer", "type": "text", "expected": "Reviewer" }
+  ],
+  "layers": ["task", "structural", "quality"]
+}

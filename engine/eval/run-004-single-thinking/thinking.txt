@@ -1,0 +1,11 @@
+Here's a plan to ensure all requirements are met:
+1.  **Structure:** Set up the basic HTML file with a single embedded `<style>` block.
+2.  **Aesthetics (Dark Mode/Colors):** Define the palette (Slate/Charcoal primary, Lavender, Sage Green, Dusty Rose accents). Use matte, soft colors.
+3.  **Layout:** Use semantic HTML5 and CSS Flexbox/Grid for responsiveness.
+4.  **Content Sections:**
+    *   Hero (Title, Subtitle, CTA).
+    *   Agent Roles (3 columns/cards).
+    *   Footer.
+5.  **Responsiveness:** Ensure sections stack vertically on mobile and transition smoothly to multi-column layouts on desktop.
+
+Let's start building the code.

@@ -1,0 +1,13 @@
+┌──────────────────────────────────────────────────────────┐
+│ mode                 │ pipeline                            │
+│ model                │ gemma4:e4b                          │
+│ num_ctx              │ 8192                                │
+│ prompt_file          │ C:\Users\aroml\Kufu\engine\eval\simple-prompt.md │
+├──────────────────────────────────────────────────────────┤
+│ planner              │ in=529 out=905 82349ms              │
+│ implementer          │ in=739 out=2351 39163ms             │
+├──────────────────────────────────────────────────────────┤
+│ total in tokens      │ 1268                                │
+│ total out tokens     │ 3256                                │
+│ total duration       │ 121569ms                            │
+└──────────────────────────────────────────────────────────┘

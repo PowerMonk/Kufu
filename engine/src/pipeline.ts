@@ -8,6 +8,8 @@ import { runPlanner } from "./planner.ts";
 import { runImplementer } from "./implementer.ts";
 import { Benchmark, writeReport } from "./benchmark.ts";
 import { UsageTracker } from "./usage.ts";
+import { runEvaluation } from "./eval/runner.ts";
+import type { Cost } from "./eval/contract.ts";
 import type { PipelineInputs, PipelineOutputs } from "./types.ts";
 
 /**
@@ -17,6 +19,7 @@ import type { PipelineInputs, PipelineOutputs } from "./types.ts";
  *   3. fetch files
  *   4. implementer
  *   5. write artifacts + benchmark report
+ *   6. (optional) run evaluation if manifest is set
  *
  * The usage tracker records per-call token counts + saturation on
  * stderr and writes a reusable ledger to engine/state/usage.txt.
@@ -26,11 +29,9 @@ export async function runPipeline(inputs: PipelineInputs): Promise<PipelineOutpu
   const usage = new UsageTracker("pipeline", inputs.model, inputs.num_ctx);
 
   try {
-    // 1. Walk the repo deterministically.
     const { files } = await walkRepo(inputs.repo);
     console.log(`[pipeline] repo: ${inputs.repo} (${files.length} files)`);
 
-    // 2. Planner.
     const planner = await runPlanner({
       model: inputs.model,
       num_ctx: inputs.num_ctx,
@@ -49,11 +50,9 @@ export async function runPipeline(inputs: PipelineInputs): Promise<PipelineOutpu
       console.log(`[pipeline] planner thinking: ${planner.result.thinking.slice(0, 200)}…`);
     }
 
-    // 3. Fetch the files the planner selected.
     const fileContents = await fetchFiles(inputs.repo, planner.task.requiredFiles);
     console.log(`[pipeline] fetched ${planner.task.requiredFiles.length} file(s)`);
 
-    // 4. Implementer.
     const impl = await runImplementer({
       model: inputs.model,
       num_ctx: inputs.num_ctx,
@@ -68,7 +67,6 @@ export async function runPipeline(inputs: PipelineInputs): Promise<PipelineOutpu
       `(${Math.round(impl.result.total_duration_ns / 1_000_000)}ms)`,
     );
 
-    // 5. Write artifacts.
     await mkdir(inputs.outDir, { recursive: true });
     await writeFile(
       `${inputs.outDir}/planner.json`,
@@ -79,8 +77,32 @@ export async function runPipeline(inputs: PipelineInputs): Promise<PipelineOutpu
     const record = bench.build();
     await writeReport(record, inputs.outDir);
 
+    if (inputs.taskManifest) {
+      await writeEval(inputs.outDir, inputs.taskManifest, impl.content, record);
+    }
+
     return { task: planner.task, implementerContent: impl.content, record };
   } finally {
     await usage.flush();
   }
+}
+
+async function writeEval(
+  outDir: string,
+  manifest: import("./eval/task.ts").TaskManifest,
+  output: string,
+  record: import("./types.ts").BenchmarkRecord,
+): Promise<void> {
+  const cost: Cost = {
+    input_tokens: record.total_in_tokens,
+    output_tokens: record.total_out_tokens,
+    total_tokens: record.total_in_tokens + record.total_out_tokens,
+    duration_ms: record.total_duration_ms,
+  };
+  const evalReport = await runEvaluation(manifest, output, cost);
+  await writeFile(`${outDir}/eval.json`, JSON.stringify(evalReport, null, 2));
+  console.error(
+    `[eval] task=${evalReport.task} passed=${evalReport.passed} ` +
+      `→ ${outDir}/eval.json`,
+  );
 }

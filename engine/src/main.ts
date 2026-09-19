@@ -27,6 +27,7 @@ interface Args {
   out: string;
   thinking?: boolean;
   seed?: number;
+  taskManifestPath?: string;
 }
 
 function parseArgs(argv: string[]): Args {
@@ -100,14 +101,21 @@ function parseArgs(argv: string[]): Args {
     result.seed = n;
   }
 
+  // Optional --task-manifest: when set, run evaluator after the
+  // implementer step and persist eval.json. Path is resolved later.
+  const taskManifestPath = map.get("--task-manifest");
+  if (typeof taskManifestPath === "string") {
+    result.taskManifestPath = resolve(taskManifestPath);
+  }
+
   return result;
 }
 
 function usage(): never {
   console.error(
     "Usage:\n" +
-      "  bun run src/main.ts run pipeline --model M --num-ctx N --repo R --prompt P --out O [--seed S]\n" +
-      "  bun run src/main.ts run single   --model M --num-ctx N --prompt P --out O [--thinking] [--seed S]",
+      "  bun run src/main.ts run pipeline --model M --num-ctx N --repo R --prompt P --out O [--seed S] [--task-manifest M]\n" +
+      "  bun run src/main.ts run single   --model M --num-ctx N --prompt P --out O [--thinking] [--seed S] [--task-manifest M]",
   );
   process.exit(2);
 }
@@ -118,6 +126,15 @@ async function main(): Promise<void> {
   const promptPath = resolve(args.prompt);
   const promptText = await readFile(promptPath, "utf8");
   const promptFile = promptPath;
+
+  // Optional task manifest. When --task-manifest is provided, load it
+  // and pass to the runner so we can write eval.json after the
+  // implementer step.
+  let taskManifest: import("./eval/task.ts").TaskManifest | undefined;
+  if (args.taskManifestPath) {
+    const raw = await readFile(args.taskManifestPath, "utf8");
+    taskManifest = JSON.parse(raw);
+  }
 
   // Wrap the inner chat() so every LLM call passes keep_alive: -1 and,
   // optionally, a fixed seed. keep_alive: -1 pins the model in VRAM
@@ -141,6 +158,7 @@ async function main(): Promise<void> {
       outDir: args.out,
       chat: persistentChat,
       thinking: args.thinking,
+      taskManifest,
     });
     console.log(renderReport(record));
   } else {
@@ -152,6 +170,7 @@ async function main(): Promise<void> {
       promptFile,
       outDir: args.out,
       chat: persistentChat,
+      taskManifest,
     });
     console.log(renderReport(record));
   }

@@ -4,6 +4,8 @@ import { mkdir, writeFile } from "node:fs/promises";
 
 import { Benchmark, writeReport } from "./benchmark.ts";
 import { UsageTracker } from "./usage.ts";
+import { runEvaluation } from "./eval/runner.ts";
+import type { Cost } from "./eval/contract.ts";
 import type { SingleInputs, SingleOutputs } from "./types.ts";
 
 /**
@@ -46,7 +48,6 @@ export async function runSingle(inputs: SingleInputs): Promise<SingleOutputs> {
     await mkdir(inputs.outDir, { recursive: true });
     await writeFile(`${inputs.outDir}/single.txt`, result.content);
 
-    // Save thinking trace if thinking was enabled and there's content
     if (inputs.thinking && result.thinking) {
       await writeFile(`${inputs.outDir}/thinking.txt`, result.thinking);
     }
@@ -54,8 +55,32 @@ export async function runSingle(inputs: SingleInputs): Promise<SingleOutputs> {
     const record = bench.build();
     await writeReport(record, inputs.outDir);
 
+    if (inputs.taskManifest) {
+      await writeEval(inputs.outDir, inputs.taskManifest, result.content, record);
+    }
+
     return { content: result.content, record };
   } finally {
     await usage.flush();
   }
+}
+
+async function writeEval(
+  outDir: string,
+  manifest: import("./eval/task.ts").TaskManifest,
+  output: string,
+  record: import("./types.ts").BenchmarkRecord,
+): Promise<void> {
+  const cost: Cost = {
+    input_tokens: record.total_in_tokens,
+    output_tokens: record.total_out_tokens,
+    total_tokens: record.total_in_tokens + record.total_out_tokens,
+    duration_ms: record.total_duration_ms,
+  };
+  const evalReport = await runEvaluation(manifest, output, cost);
+  await writeFile(`${outDir}/eval.json`, JSON.stringify(evalReport, null, 2));
+  console.error(
+    `[eval] task=${evalReport.task} passed=${evalReport.passed} ` +
+      `→ ${outDir}/eval.json`,
+  );
 }

@@ -40,6 +40,8 @@ export interface PipelineInputs {
   promptFile: string;
   outDir: string;
   chat: typeof import("./ollama.ts").default;
+  /** Optional eval manifest. When set, evaluator runs and writes eval.json. */
+  taskManifest?: import("./eval/task.ts").TaskManifest;
 }
 
 /** Outputs of a pipeline run. */
@@ -59,6 +61,8 @@ export interface SingleInputs {
   chat: typeof import("./ollama.ts").default;
   /** Enable thinking mode (default: false). */
   thinking?: boolean;
+  /** Optional eval manifest. When set, evaluator runs and writes eval.json. */
+  taskManifest?: import("./eval/task.ts").TaskManifest;
 }
 
 /** Outputs of a single-model run. */

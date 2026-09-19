@@ -1,0 +1,254 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kufu - Open-Source Local-First Coding Assistant</title>
+    <style>
+        /* Global Styles & Variables */
+        :root {
+            /* Dark Mode Palette */
+            --color-background: #1a1a2e; /* Deep Slate/Charcoal */
+            --color-surface: #2c2c42;    /* Slightly lighter slate for cards/elements */
+            --color-text-primary: #e0e0e0; /* Soft off-white text */
+            --color-accent-lavender: #c5b3e2; /* Pastel Accent 1 */
+            --color-accent-sage: #b4c495;    /* Pastel Accent 2 */
+            --color-accent-rose: #d390a9;   /* Pastel Accent 3 */
+            --color-text-secondary: #a0a0b0; /* Subtle text */
+            --color-border: #3a3a50;
+        }
+
+        /* Base Reset and Typography */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--color-background);
+            color: var(--color-text-primary);
+            line-height: 1.6;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem 0;
+        }
+
+        /* --- Components --- */
+
+        /* Header & Hero */
+        header {
+            background-color: var(--color-surface);
+            padding: 4rem 0;
+            text-align: center;
+            border-bottom: 1px solid var(--color-border);
+        }
+
+        .hero-content {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            font-size: 3.5rem;
+            margin-bottom: 1rem;
+            color: #ffffff;
+            background: linear-gradient(45deg, var(--color-accent-lavender) 0%, var(--color-accent-sage) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        h2 {
+            font-size: 2rem;
+            margin-bottom: 2rem;
+            color: var(--color-text-primary);
+        }
+
+        .subtitle {
+            font-size: 1.25rem;
+            color: var(--color-text-secondary);
+            margin-bottom: 3rem;
+        }
+
+        /* Call to Action Button Styling */
+        .cta-button {
+            display: inline-block;
+            padding: 12px 30px;
+            background-color: var(--color-accent-lavender);
+            color: var(--color-background);
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: background-color 0.3s ease, transform 0.1s;
+            box-shadow: 0 4px 10px rgba(197, 179, 226, 0.3);
+            border: none;
+            cursor: pointer;
+        }
+
+        .cta-button:hover {
+            background-color: #a385c4; /* Darken hover slightly */
+            transform: translateY(-2px);
+        }
+
+        /* Section Styling */
+        section {
+            padding: 60px 0;
+        }
+
+        /* Agent Roles Section (Grid Layout) */
+        #roles {
+            background-color: var(--color-background);
+        }
+
+        #roles h3 {
+            text-align: center;
+            font-size: 2.5rem;
+            margin-bottom: 3rem;
+        }
+
+        .role-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            padding: 0 10px;
+        }
+
+        .role-card {
+            background-color: var(--color-surface);
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+            border-top: 4px solid;
+            transition: transform 0.3s ease;
+        }
+
+        .role-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 25px rgba(0, 0, 0, 0.4);
+        }
+
+        .role-card h4 {
+            font-size: 1.7rem;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+        }
+
+        .role-card .icon {
+            margin-right: 10px;
+            font-size: 1.5em;
+        }
+
+        .role-card p {
+            color: var(--color-text-secondary);
+        }
+
+        /* Role Specific Styling */
+        .planner {
+            border-top-color: var(--color-accent-lavender);
+        }
+        .planner h4 { color: var(--color-accent-lavender); }
+
+        .implementer {
+            border-top-color: var(--color-accent-sage);
+        }
+        .implementer h4 { color: var(--color-accent-sage); }
+
+        .reviewer {
+            border-top-color: var(--color-accent-rose);
+        }
+        .reviewer h4 { color: var(--color-accent-rose); }
+
+        /* Footer */
+        footer {
+            background-color: var(--color-surface);
+            text-align: center;
+            padding: 20px 0;
+            border-top: 1px solid var(--color-border);
+            font-size: 0.9rem;
+            color: var(--color-text-secondary);
+        }
+
+        /* Responsiveness */
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2.8rem;
+            }
+            h2 {
+                font-size: 2rem;
+            }
+            .subtitle {
+                font-size: 1.1rem;
+            }
+            .role-grid {
+                grid-template-columns: 1fr; /* Stack cards on smaller screens */
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header & Hero Section -->
+    <header>
+        <div class="container hero-content">
+            <h1 class="display-title">Kufu</h1>
+            <p class="subtitle">Your open-source, local-first coding assistant. Build complex features with structured, multi-agent collaboration.</p>
+            <a href="#roles" class="cta-button">See How It Works</a>
+        </div>
+    </header>
+
+    <!-- Roles Explanation Section -->
+    <section id="roles">
+        <div class="container">
+            <h3>The Three Agents of Creation</h3>
+            <p style="text-align: center; max-width: 800px; margin: -10px auto 40px; color: var(--color-text-secondary);">Kufu operates by simulating a team of specialized AI roles, ensuring comprehensive output from planning through to final polish.</p>
+
+            <div class="role-grid">
+                
+                <!-- Planner Role -->
+                <article class="role-card planner">
+                    <h4><span class="icon">🧠</span> The Planner</h4>
+                    <p>Takes a high-level goal and breaks it down into actionable, sequential steps. It designs the architectural roadmap before any code is written, ensuring all necessary components are accounted for.</p>
+                </article>
+
+                <!-- Implementer Role -->
+                <article class="role-card implementer">
+                    <h4><span class="icon">💻</span> The Implementer</h4>
+                    <p>Takes the plan and writes the functional code. This agent focuses on clean syntax, efficient logic, and adhering strictly to the established technical specifications.</p>
+                </article>
+
+                <!-- Reviewer Role -->
+                <article class="role-card reviewer">
+                    <h4><span class="icon">🔎</span> The Reviewer</h4>
+                    <p>Acts as a rigorous quality gate. It scrutinizes the code for bugs, potential edge cases, security vulnerabilities, and adherence to best practices, providing detailed feedback.</p>
+                </article>
+            </div>
+        </div>
+    </section>
+
+    <!-- Optional: Add a "Why Kufu?" section for completeness, structured similar to the above -->
+    <section style="padding-bottom: 0;">
+        <div class="container" style="text-align: center;">
+            <h3 style="font-size: 2.5rem; margin-bottom: 2rem;">Why Choose Local-First?</h3>
+            <p style="max-width: 900px; margin: 0 auto 30px; color: var(--color-text-secondary);">Keep your coding context, history, and AI prompts entirely on your machine. Kufu prioritizes privacy and reliability without needing constant cloud connectivity.</p>
+            <a href="#" class="cta-button" style="background-color: var(--color-accent-sage); color: var(--color-background);">View Documentation (Placeholder)</a>
+        </div>
+    </section>
+
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            &copy; 2024 Kufu Assistant. Built with Passion and Open Source Principles. | <a href="#" style="color: var(--color-accent-lavender); text-decoration: none;">GitHub</a>
+        </div>
+    </footer>
+
+</body>
+</html>
+```
