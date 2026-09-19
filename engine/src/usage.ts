@@ -1,15 +1,16 @@
-// usage.ts - Tracks context-window saturation across an engine run.
+// usage.ts - Tracks per-call token utilization and writes a ledger.
 //
-// "Saturation" here means: how much of the configured `num_ctx` have we
-// spent across all LLM calls in this run? Each call reports its own
-// prompt_eval_count and eval_count; we accumulate them. The per-step
-// stderr line shows prev -> new saturation so the operator can read
-// off how many more calls of this size the model can absorb before
-// hitting the context ceiling.
+// Two metrics are surfaced:
+//   1. Per-call utilization: how much of `num_ctx` did THIS call consume?
+//      (in_tok / num_ctx, out_tok / num_ctx, total / num_ctx). Each Ollama
+//      call is an independent context window — they don't stack. This is
+//      the honest "how full is this call's brain?" metric.
+//   2. Cumulative cost: in_tok + out_tok + total summed across calls in
+//      the run. This is the "how much did this run cost?" metric. We
+//      track it separately because it has a different meaning.
 //
-// We also sample VRAM via Ollama's GET /api/ps so the ledger records
-// the model's actual residency. This is a secondary signal: the primary
-// metric (saturation) is logical and reproducible.
+// VRAM is sampled via Ollama's GET /api/ps and recorded as a secondary
+// signal so we can confirm the model is actually loaded.
 //
 // At the end of the run we rewrite `engine/state/usage.txt` with the
 // full ledger. Rewriting (not appending) keeps the file readable after
@@ -29,8 +30,9 @@ export interface UsageRow {
   in_tokens: number;
   out_tokens: number;
   total_tokens: number;
-  prev_sat_pct: number;
-  new_sat_pct: number;
+  in_pct: number;
+  out_pct: number;
+  tot_pct: number;
   cum_in: number;
   cum_out: number;
   cum_total: number;
@@ -44,7 +46,7 @@ export interface UsageLedger {
   num_ctx: number;
   started_iso: string;
   rows: UsageRow[];
-  saturation_peak_pct: number;
+  peak_per_call_tot_pct: number;
   total_in_tokens: number;
   total_out_tokens: number;
   total_tokens: number;
@@ -65,7 +67,7 @@ export class UsageTracker {
   private cum_out = 0;
   private cum_total = 0;
   private vram_peak = 0;
-  private sat_peak = 0;
+  private peak_per_call_tot = 0;
   private per_step_index = new Map<string, number>();
   private readonly started_iso = new Date().toISOString();
 
@@ -91,12 +93,15 @@ export class UsageTracker {
     const idx = (this.per_step_index.get(step) ?? 0) + 1;
     this.per_step_index.set(step, idx);
 
-    const prev_sat = this.saturationPct(this.cum_in);
     this.cum_in += in_tokens;
     this.cum_out += out_tokens;
+    const total = in_tokens + out_tokens;
     this.cum_total = this.cum_in + this.cum_out;
-    const new_sat = this.saturationPct(this.cum_in);
-    if (new_sat > this.sat_peak) this.sat_peak = new_sat;
+
+    const in_pct = this.utilizationPct(in_tokens);
+    const out_pct = this.utilizationPct(out_tokens);
+    const tot_pct = this.utilizationPct(total);
+    if (tot_pct > this.peak_per_call_tot) this.peak_per_call_tot = tot_pct;
 
     let vram: number | null = null;
     try {
@@ -108,7 +113,6 @@ export class UsageTracker {
         if (v > this.vram_peak) this.vram_peak = v;
       }
     } catch {
-      // /api/ps failing is not fatal — saturation is the primary metric.
       vram = null;
     }
 
@@ -117,9 +121,10 @@ export class UsageTracker {
       call_index: idx,
       in_tokens,
       out_tokens,
-      total_tokens: in_tokens + out_tokens,
-      prev_sat_pct: prev_sat,
-      new_sat_pct: new_sat,
+      total_tokens: total,
+      in_pct,
+      out_pct,
+      tot_pct,
       cum_in: this.cum_in,
       cum_out: this.cum_out,
       cum_total: this.cum_total,
@@ -141,7 +146,7 @@ export class UsageTracker {
       num_ctx: this.num_ctx,
       started_iso: this.started_iso,
       rows: this.rows,
-      saturation_peak_pct: this.sat_peak,
+      peak_per_call_tot_pct: this.peak_per_call_tot,
       total_in_tokens: this.cum_in,
       total_out_tokens: this.cum_out,
       total_tokens: this.cum_total,
@@ -152,15 +157,15 @@ export class UsageTracker {
     await writeFile(LEDGER_PATH, renderLedger(ledger), "utf8");
 
     console.error(
-      `[usage] DONE peak_sat=${this.sat_peak.toFixed(1)}% ` +
-        `total=${this.cum_total} (in=${this.cum_in} out=${this.cum_out}) ` +
+      `[usage] DONE peak_per_call_tot%=${this.peak_per_call_tot.toFixed(1)} ` +
+        `cost=(in=${this.cum_in} out=${this.cum_out} total=${this.cum_total}) ` +
         `vram_peak=${formatBytes(this.vram_peak)} ` +
         `ledger=${LEDGER_PATH}`,
     );
   }
 
-  /** Returns saturation as a percentage of num_ctx for a given token count. */
-  private saturationPct(tokens: number): number {
+  /** Returns a count as a percentage of num_ctx. */
+  private utilizationPct(tokens: number): number {
     if (this.num_ctx <= 0) return 0;
     return (tokens / this.num_ctx) * 100;
   }
@@ -168,12 +173,11 @@ export class UsageTracker {
   /** Prints the per-call stderr line. */
   private printRow(row: UsageRow): void {
     const step = row.step.padEnd(14);
-    const delta = `${row.prev_sat_pct.toFixed(1)}% -> ${row.new_sat_pct.toFixed(1)}%`;
     const vram = row.vram_bytes === null ? "n/a" : formatBytes(row.vram_bytes);
     console.error(
       `[usage] step=${step} call=${row.call_index} ` +
         `in=${row.in_tokens} out=${row.out_tokens} total=${row.total_tokens} ` +
-        `sat ${delta} ` +
+        `in% ${row.in_pct.toFixed(1)} out% ${row.out_pct.toFixed(1)} tot% ${row.tot_pct.toFixed(1)} ` +
         `cum_in=${row.cum_in} cum_out=${row.cum_out} cum_total=${row.cum_total} ` +
         `vram=${vram}`,
     );
@@ -208,8 +212,9 @@ function renderLedger(ledger: UsageLedger): string {
     "in_tok".padStart(8) +
     "out_tok".padStart(9) +
     "total".padStart(9) +
-    "prev_sat".padStart(10) +
-    "new_sat".padStart(10) +
+    "in%".padStart(7) +
+    "out%".padStart(7) +
+    "tot%".padStart(7) +
     "cum_in".padStart(9) +
     "cum_out".padStart(10) +
     "cum_tot".padStart(10) +
@@ -224,8 +229,9 @@ function renderLedger(ledger: UsageLedger): string {
         String(r.in_tokens).padStart(8) +
         String(r.out_tokens).padStart(9) +
         String(r.total_tokens).padStart(9) +
-        `${r.prev_sat_pct.toFixed(1)}%`.padStart(10) +
-        `${r.new_sat_pct.toFixed(1)}%`.padStart(10) +
+        `${r.in_pct.toFixed(1)}%`.padStart(7) +
+        `${r.out_pct.toFixed(1)}%`.padStart(7) +
+        `${r.tot_pct.toFixed(1)}%`.padStart(7) +
         String(r.cum_in).padStart(9) +
         String(r.cum_out).padStart(10) +
         String(r.cum_total).padStart(10) +
@@ -234,10 +240,11 @@ function renderLedger(ledger: UsageLedger): string {
   }
 
   lines.push("");
-  lines.push(`saturation_peak : ${ledger.saturation_peak_pct.toFixed(1)}%`);
-  lines.push(`total_in_tokens  : ${ledger.total_in_tokens}`);
-  lines.push(`total_out_tokens : ${ledger.total_out_tokens}`);
-  lines.push(`total_tokens     : ${ledger.total_tokens}`);
-  lines.push(`vram_peak        : ${formatBytes(ledger.vram_peak_bytes)}`);
+  lines.push("cost_summary:");
+  lines.push(`  peak_per_call_tot% : ${ledger.peak_per_call_tot_pct.toFixed(1)}%`);
+  lines.push(`  total_in_tokens    : ${ledger.total_in_tokens}`);
+  lines.push(`  total_out_tokens   : ${ledger.total_out_tokens}`);
+  lines.push(`  total_tokens       : ${ledger.total_tokens}`);
+  lines.push(`  vram_peak          : ${formatBytes(ledger.vram_peak_bytes)}`);
   return lines.join("\n") + "\n";
 }

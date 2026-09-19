@@ -1,0 +1,289 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kufu - Local-First Coding Assistant</title>
+    <style>
+        /* 
+           ================================================
+           GLOBAL STYLES & VARIABLES
+           ================================================ 
+        */
+        :root {
+            /* Primary Background Colors (Matte Dark) */
+            --bg-primary: #1c2833; /* Slate/Charcoal Dark */
+            --bg-secondary: #2a3e4f; /* Slightly lighter card background */
+            --text-light: #e0e4e8; /* Light grey text */
+
+            /* Accent Colors (Soft Pastels) */
+            --accent-lavender: #b8a3d2; /* Soft Lavender */
+            --accent-sage: #a0b39d; /* Sage Green */
+            --accent-rose: #e8c9d2; /* Dusty Rose */
+
+            /* Utility Colors */
+            --border-color: #3e506a;
+            --text-muted: #9ca3b0;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+            background-color: var(--bg-primary);
+            color: var(--text-light);
+            line-height: 1.6;
+            padding-top: 60px; /* Space for fixed header/hero */
+        }
+
+        a {
+            text-decoration: none;
+            color: var(--accent-lavender);
+            transition: color 0.3s;
+        }
+
+        a:hover {
+            color: var(--accent-sage);
+        }
+
+        /* 
+           ================================================
+           LAYOUT UTILITIES
+           ================================================ 
+        */
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* 
+           ================================================
+           HEADER / HERO SECTION 
+           ================================================ 
+        */
+
+        .hero {
+            text-align: center;
+            padding: 80px 0 60px;
+            background-color: var(--bg-secondary);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .hero h1 {
+            font-size: 3.5rem;
+            margin-bottom: 15px;
+            color: #ffffff; /* Pure white for maximum impact */
+        }
+
+        .hero p.subtitle {
+            font-size: 1.5rem;
+            color: var(--text-muted);
+            margin-bottom: 40px;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .cta-button {
+            display: inline-block;
+            padding: 12px 30px;
+            background-color: var(--accent-lavender);
+            color: var(--bg-primary); /* Dark text on pastel background */
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border-radius: 8px;
+            transition: background-color 0.3s, transform 0.2s;
+            border: none;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .cta-button:hover {
+            background-color: var(--accent-sage);
+            transform: translateY(-2px);
+        }
+
+        /* 
+           ================================================
+           AGENTS SECTION (Three Roles)
+           ================================================ 
+        */
+
+        .agents-section {
+            padding: 80px 0;
+            text-align: center;
+        }
+
+        .agents-section h2 {
+            font-size: 2.5rem;
+            margin-bottom: 60px;
+            color: var(--text-light);
+        }
+
+        .agent-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 30px;
+            justify-content: center;
+        }
+
+        .agent-card {
+            flex: 1 1 300px; /* Allows flexibility, minimum width of 300px */
+            background-color: var(--bg-secondary);
+            padding: 30px;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s, box-shadow 0.3s;
+            text-align: left;
+        }
+
+        .agent-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+        }
+
+        .agent-card h3 {
+            font-size: 1.8rem;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .agent-card h3::before {
+            content: '•';
+            color: var(--accent-lavender);
+            font-size: 2rem;
+            margin-right: 10px;
+            display: inline-block;
+        }
+
+        .agent-card p {
+            color: var(--text-muted);
+        }
+
+        /* Specific Role Accents (Optional but nice touch) */
+        .planner h3::before { content: '💡'; color: var(--accent-sage); }
+        .implementer h3::before { content: '⚙️'; color: var(--accent-lavender); }
+        .reviewer h3::before { content: '✅'; color: var(--accent-rose); }
+
+
+        /* 
+           ================================================
+           FOOTER 
+           ================================================ 
+        */
+        footer {
+            background-color: var(--bg-primary);
+            padding: 30px 0;
+            text-align: center;
+            border-top: 1px solid var(--border-color);
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        footer a {
+            color: var(--accent-sage);
+            margin: 0 10px;
+        }
+
+
+        /* 
+           ================================================
+           RESPONSIVENESS 
+           ================================================ 
+        */
+
+        @media (max-width: 768px) {
+            /* Mobile adjustments */
+            .hero h1 {
+                font-size: 2.8rem;
+            }
+
+            .hero p.subtitle {
+                font-size: 1.2rem;
+            }
+            
+            /* Stacks agents vertically on smaller screens */
+            .agent-grid {
+                flex-direction: column;
+                gap: 25px;
+            }
+
+            .agent-card {
+                flex-basis: 100%; /* Full width on mobile */
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 1. HERO SECTION -->
+    <header class="hero">
+        <div class="container">
+            <h1>Kufu: The Local-First AI Coding Assistant</h1>
+            <p class="subtitle">
+                Build robust, private, and efficient applications directly on your machine, without relying on cloud APIs or brittle internet connections.
+            </p>
+            <a href="#get-started" class="cta-button">Get Started Locally</a>
+        </div>
+    </header>
+
+    <!-- 2. AGENTS SECTION -->
+    <section class="agents-section" id="features">
+        <div class="container">
+            <h2>The Tri-Agent Architecture</h2>
+            <p class="subtitle" style="margin-bottom: 50px; color: var(--text-muted);">
+                Kufu operates using three specialized agents that collaborate to ensure high-quality, verifiable, and structured code output every time.
+            </p>
+
+            <div class="agent-grid">
+
+                <!-- Agent 1: Planner -->
+                <article class="agent-card planner">
+                    <h3>The Planner</h3>
+                    <p>
+                        Translates high-level user requirements into detailed, actionable development steps. This agent creates the overall project structure, defines necessary files, and maps out the logical flow, ensuring the scope is manageable and thorough.
+                    </p>
+                </article>
+
+                <!-- Agent 2: Implementer -->
+                <article class="agent-card implementer">
+                    <h3>The Implementer</h3>
+                    <p>
+                        The core coding engine. It takes the plan and writes the code, filling in necessary functions, completing boilerplate, and structuring the files according to best practices. It focuses on speed and execution fidelity.
+                    </p>
+                </article>
+
+                <!-- Agent 3: Reviewer -->
+                <article class="agent-card reviewer">
+                    <h3>The Reviewer</h3>
+                    <p>
+                        Acts as a dedicated QA layer. It critically analyzes the generated code for vulnerabilities, bugs, performance bottlenecks, and style inconsistencies, suggesting precise fixes before the code is finalized.
+                    </p>
+                </article>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- 3. FOOTER -->
+    <footer>
+        <div class="container">
+            <p>&copy; 2024 Kufu AI. Built with a passion for local development.</p>
+            <p style="margin-top: 10px;">
+                <a href="#">Documentation</a> | <a href="#">GitHub</a> | <a href="#">Contact</a>
+            </p>
+        </div>
+    </footer>
+
+</body>
+</html>
+```

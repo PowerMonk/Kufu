@@ -1,0 +1,86 @@
+{
+  "task": "landing-001",
+  "passed": false,
+  "output_kind": "html",
+  "requirements": {
+    "passed": 6,
+    "failed": 0,
+    "total": 6
+  },
+  "structural": {
+    "layer": "structural",
+    "html_errors": 1,
+    "accessibility_issues": 0,
+    "checks_passed": 11,
+    "checks_total": 12,
+    "checks": [
+      {
+        "id": "has_doctype",
+        "pass": false,
+        "detail": "no <!DOCTYPE html> declaration"
+      },
+      {
+        "id": "has_html_lang",
+        "pass": true
+      },
+      {
+        "id": "has_title",
+        "pass": true,
+        "detail": "<title> is empty"
+      },
+      {
+        "id": "has_meta_charset",
+        "pass": true
+      },
+      {
+        "id": "has_viewport",
+        "pass": true
+      },
+      {
+        "id": "images_have_alt",
+        "pass": true,
+        "detail": "no <img> tags"
+      },
+      {
+        "id": "buttons_not_divs",
+        "pass": true
+      },
+      {
+        "id": "links_have_href",
+        "pass": true
+      },
+      {
+        "id": "no_duplicate_ids",
+        "pass": true
+      },
+      {
+        "id": "heading_hierarchy",
+        "pass": true
+      },
+      {
+        "id": "no_empty_elements",
+        "pass": true
+      },
+      {
+        "id": "no_inline_event_handlers",
+        "pass": true
+      }
+    ]
+  },
+  "code": {
+    "layer": "quality",
+    "loc": 229,
+    "file_count": 1,
+    "asset_count": 0,
+    "broken_imports": 0,
+    "syntax_errors": 0,
+    "unused_symbols": 0
+  },
+  "cost": {
+    "input_tokens": 182,
+    "output_tokens": 2500,
+    "total_tokens": 2682,
+    "duration_ms": 47697
+  },
+  "timestamp": "2026-09-18T21:56:54.531Z"
+}
